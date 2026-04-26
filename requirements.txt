@@ -1,4 +1,4 @@
-﻿django
+django
 gunicorn
 whitenoise
 requests
@@ -9,3 +9,5 @@ python-dotenv
 dj-database-url
 psycopg2-binary
 django-allauth
+PyJWT
+groq
