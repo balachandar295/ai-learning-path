@@ -115,8 +115,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'METHOD': 'oauth2',
         'VERIFIED_EMAIL': True,
         'APP': {
-            'client_id': 'temp_id_please_change',
-            'secret': 'temp_secret_please_change',
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID', 'temp_id_please_change'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', 'temp_secret_please_change'),
             'key': ''
         }
     }
