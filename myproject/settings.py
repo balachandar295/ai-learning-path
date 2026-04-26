@@ -113,7 +113,12 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
         'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': True
+        'VERIFIED_EMAIL': True,
+        'APP': {
+            'client_id': 'temp_id_please_change',
+            'secret': 'temp_secret_please_change',
+            'key': ''
+        }
     }
 }
 SOCIALACCOUNT_LOGIN_ON_GET = True
