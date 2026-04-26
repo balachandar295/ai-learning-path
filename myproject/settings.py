@@ -113,12 +113,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
         'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': True,
-        'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
-            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', ''),
-            'key': ''
-        }
+        'VERIFIED_EMAIL': True
     }
 }
 SOCIALACCOUNT_LOGIN_ON_GET = True
