@@ -54,4 +54,5 @@ urlpatterns = [
     path('certificate/', views.certificate_view, name='certificate_view'),
     path('mock-interview/', views.mock_interview_view, name='mock_interview'),
     path('api/interview-chat/', views.interview_chat, name='interview_chat'),
+    path('load-my-data/', views.load_data_view, name='load_data'),
 ]
