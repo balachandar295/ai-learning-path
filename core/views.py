@@ -826,12 +826,18 @@ def update_streak_api(request):
         except Exception as e: return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"status": "Invalid request"}, status=400)
 
-from django.core.management import call_command
-from django.http import HttpResponse
+from django.core.serializers import deserialize
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def load_data_view(request):
-    try:
-        call_command('loaddata', 'db_dump_clean.json')
-        return HttpResponse("Data loaded successfully! You can go back to the app now.")
-    except Exception as e:
-        return HttpResponse(f"Error loading data: {e}")
+    if request.method == "POST":
+        try:
+            objects = deserialize("json", request.body)
+            for obj in objects:
+                obj.save()
+            return JsonResponse({"status": "success", "message": "Data loaded successfully!"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+    return HttpResponse("Send a POST request with JSON dump data.")
