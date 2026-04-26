@@ -1,0 +1,462 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmetic Puzzles | 18 Topics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="data:,">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f4f7fb; color: #333; overflow-x: hidden; }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 60px; background: #1e1e2f; position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { color: #00d4ff; font-size: 22px; font-weight: 600; text-decoration: none; }
+        nav { display: flex; align-items: center; gap: 20px; }
+        nav a { text-decoration: none; color: #fff; font-weight: 400; transition: 0.3s; }
+        nav a:hover { color: #00d4ff; }
+        .btn-logout { color: #ff4d4d !important; font-weight: bold; }
+
+        .hero {
+            text-align: center; padding: 80px 20px 140px;
+            background: linear-gradient(135deg, #1e1e2f, #00d4ff); color: #fff;
+        }
+        .hero h1 { font-size: 38px; margin-bottom: 15px; font-weight: 700; }
+        .hero p { font-size: 18px; opacity: 0.9; max-width: 700px; margin: auto; }
+
+        .container { max-width: 1200px; margin: -80px auto 100px; padding: 0 20px; }
+
+        .level-header {
+            margin: 40px 0 25px; padding: 15px 25px; background: #fff;
+            border-left: 6px solid #6c63ff; border-radius: 12px;
+            font-size: 22px; font-weight: 700; color: #1e1e2f;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .topics-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;
+        }
+
+        .topic-card {
+            background: #fff; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.4s;
+            position: relative; border: 1px solid rgba(0,0,0,0.02);
+            display: flex; flex-direction: column;
+        }
+        .topic-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+        .topic-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, #00d4ff, #6c63ff); border-radius: 20px 20px 0 0;
+        }
+
+        .card-icon { font-size: 35px; color: #00d4ff; margin-bottom: 20px; }
+        .topic-card h3 { font-size: 19px; color: #1e1e2f; margin-bottom: 12px; font-weight: 600; }
+        .topic-card p { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 15px; flex-grow: 1; }
+
+        .progress-container { margin-bottom: 20px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px; }
+        .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #00d4ff, #6c63ff); border-radius: 10px; }
+
+        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn {
+            padding: 10px; text-align: center; border-radius: 10px;
+            text-decoration: none; font-size: 12px; font-weight: 700; transition: 0.3s;
+        }
+        .btn-learn { background: #f0f4ff; color: #6c63ff; grid-column: span 2; margin-bottom: 5px; }
+        .btn-practice { background: #e0faff; color: #00d4ff; }
+        .btn-test { background: #ffffff; color: #070606; border: 1px solid #eee; }
+        .btn:hover { filter: brightness(0.9); transform: scale(1.02); }
+
+        .level-2 .level-header { border-left-color: #00d4ff; }
+        .advanced-level .level-header { border-left-color: #ff4d4d; }
+        .advanced-level .topic-card::before { background: linear-gradient(90deg, #ff4d4d, #f97316); }
+        .advanced-level .card-icon { color: #ff4d4d; }
+        .advanced-level .progress-fill { background: linear-gradient(90deg, #ff4d4d, #f97316); }
+
+        footer { text-align: center; padding: 40px; background: #f4f7fb; }
+        footer p { color: #6c63ff; font-size: 14px; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 20px; }
+            .hero h1 { font-size: 28px; }
+            .container { margin-top: -50px; }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <nav class="navbar" style="padding: 5px 60px; height: auto;">
+        <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <nav>
+            <a href="/home/">Dashboard</a>
+            <a href="{% url 'progress_view' %}">Progress</a>
+            <a href="/logout/" class="btn-logout">Logout</a>
+        </nav>
+    </nav>
+
+    <header class="hero">
+        <h1>Arithmetic Puzzles</h1>
+        <p>18 structured puzzles to sharpen your logical thinking and mathematical speed.</p>
+    </header>
+
+    <div class="container">
+
+        <!-- BASIC LEVEL -->
+        <div class="level-header"><i class="fas fa-seedling"></i> Level 1: Basic — Puzzle Foundations</div>
+        <div class="topics-grid">
+
+            <div class="topic-card">
+                <i class="fas fa-grid-3 card-icon"></i>
+                <h3>Sudoku</h3>
+                <p>Fill the 9×9 grid so each row, column, and 3×3 box contains numbers 1-9.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=sudoku" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=sudoku&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=sudoku&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-calculator card-icon"></i>
+                <h3>Number Puzzles</h3>
+                <p>Solve numerical grids and find the missing numbers based on logic.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=number_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=number_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=number_puzzles&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-font card-icon"></i>
+                <h3>Missing Letters</h3>
+                <p>Identify the missing letters in sequences or grids using alphabetical logic.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=missing_letters" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=missing_letters&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=missing_letters&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-image card-icon"></i>
+                <h3>Picture Puzzles</h3>
+                <p>Analyze images to find hidden objects or identifying visual differences.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=picture_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=picture_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=picture_puzzles&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-shapes card-icon"></i>
+                <h3>Pattern Puzzles</h3>
+                <p>Discover repeating patterns and transformations in geometric shapes.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=pattern_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=pattern_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=pattern_puzzles&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-object-ungroup card-icon"></i>
+                <h3>Odd Figure</h3>
+                <p>Determine which figure in a set is the odd one out based on logic.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=odd_figure" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=odd_figure&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=odd_figure&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- INTERMEDIATE LEVEL -->
+        <div class="level-2">
+            <div class="level-header"><i class="fas fa-brain"></i> Level 2: Intermediate — Logical Deduction</div>
+            <div class="topics-grid">
+
+                <div class="topic-card">
+                    <i class="fas fa-lightbulb card-icon"></i>
+                    <h3>Logical Puzzles</h3>
+                    <p>Deduce relationships and solve multi-variable logical situations.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=logical_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=logical_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=logical_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-clock card-icon"></i>
+                    <h3>Clock Puzzles</h3>
+                    <p>Solve problems involving angles between clock hands and time accuracy.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=clock_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=clock_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=clock_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-calendar-alt card-icon"></i>
+                    <h3>Calendar Puzzles</h3>
+                    <p>Calculate days of the week and solve date-related logical problems.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=calendar_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=calendar_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=calendar_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-infinity card-icon"></i>
+                    <h3>Mathematical Puzzles</h3>
+                    <p>Creative equations and cryptarithmetic problems using digit substitution.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=math_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=math_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=math_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-dice card-icon"></i>
+                    <h3>Dice Puzzles</h3>
+                    <p>Visualize 3D dice positions and identify hidden opposite faces.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=dice_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=dice_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=dice_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-fire card-icon"></i>
+                    <h3>Matchstick Puzzles</h3>
+                    <p>Rearrange matchsticks to fix mathematical equations or shapes.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=matchstick_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=matchstick_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=matchstick_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ADVANCED LEVEL -->
+        <div class="advanced-level">
+            <div class="level-header"><i class="fas fa-trophy"></i> Level 3: Advanced — Master Puzzles</div>
+            <div class="topics-grid">
+
+                <div class="topic-card">
+                    <i class="fas fa-table card-icon"></i>
+                    <h3>Grid Puzzles</h3>
+                    <p>Solve complex matrix-based logical riddles with multiple constraints.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=grid_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=grid_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=grid_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-project-diagram card-icon"></i>
+                    <h3>Sequence Puzzles</h3>
+                    <p>Analyze advanced numerical and symbol chains with complex rules.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=sequence_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=sequence_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=sequence_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-users-rectangle card-icon"></i>
+                    <h3>Arrangement Puzzles</h3>
+                    <p>Master linear and circular seating arrangements with complex variables.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=arrangement_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=arrangement_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=arrangement_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-asterisk card-icon"></i>
+                    <h3>Symbol Puzzles</h3>
+                    <p>Decode mathematical operations represented by non-standard symbols.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=symbol_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=symbol_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=symbol_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-hashtag card-icon"></i>
+                    <h3>Cross Number</h3>
+                    <p>Numerical crossword puzzles where each digit must satisfy multi-grid clues.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=cross_number" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=cross_number&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=cross_number&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-magic card-icon"></i>
+                    <h3>Brain Teasers</h3>
+                    <p>Lateral thinking challenges that require out-of-the-box logic to solve.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=brain_teasers" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=brain_teasers&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=brain_teasers&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Aptitude Mastery Platform. All rights reserved.</p>
+    </footer>
+
+{% include 'ai_bot.html' %}
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const topicKeys = [
+            'sudoku', 'number_puzzles', 'missing_letters', 'picture_puzzles', 'pattern_puzzles', 'odd_figure',
+            'logical_puzzles', 'clock_puzzles', 'calendar_puzzles', 'math_puzzles', 'dice_puzzles', 'matchstick_puzzles',
+            'grid_puzzles', 'sequence_puzzles', 'arrangement_puzzles', 'symbol_puzzles', 'cross_number', 'brain_teasers'
+        ];
+        const progressFills = document.querySelectorAll('.progress-fill');
+        const progressLabels = document.querySelectorAll('.progress-label span:nth-child(2)');
+
+        topicKeys.forEach((key, index) => {
+            const progress = localStorage.getItem('aptitude_progress_' + key) || 0;
+            if (progressFills[index]) progressFills[index].style.width = progress + '%';
+            if (progressLabels[index]) progressLabels[index].innerText = progress + '%';
+        });
+    });
+</script>

@@ -1,0 +1,588 @@
+        {% load static %}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AI-Assisted Learning Path Generator</title>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link rel="stylesheet" href="{% static 'basic.css' %}">
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <style>
+                /* Premium Lab Grid Styling - Hexagonal Track Design */
+                .lab-container {
+                    display: none;
+                    padding: 60px 20px;
+                    background: #ffffff;
+                    text-align: center;
+                    border-top: 1px solid #f0f0f0;
+                    animation: slideDown 0.5s ease;
+                }
+                
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .lab-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    gap: 30px;
+                    max-width: 1200px;
+                    margin: 40px auto;
+                    padding: 20px;
+                }
+
+                .lab-item {
+                    position: relative;
+                    padding: 25px 15px;
+                    background: #fff;
+                    cursor: pointer;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    text-decoration: none;
+                    color: inherit;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                /* Hexagonal Border Effect */
+                .lab-item::before {
+                    content: "";
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    border: 2px solid #e5e7eb;
+                    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+                    transition: all 0.4s ease;
+                    z-index: 1;
+                }
+
+                .lab-item:hover::before {
+                    border-color: #6366f1;
+                    transform: scale(1.1);
+                    background: rgba(99, 102, 241, 0.03);
+                }
+
+                .lab-item i {
+                    font-size: 2.5rem;
+                    margin-bottom: 12px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item p {
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin: 0;
+                    color: #374151;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item span {
+                    font-size: 0.7rem;
+                    color: #9ca3af;
+                    margin-top: 4px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .clickable-card {
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .clickable-card:hover {
+                    border-color: #6366f1;
+                    background: rgba(99, 102, 241, 0.05);
+                }
+                .user-welcome-bar {
+    background: white;
+    max-width: 1000px;
+    margin: -30px auto 40px; /* Hero-kku mela konjam overlap aagura maari */
+    padding: 20px 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
+}
+
+.welcome-text {
+    font-size: 1.1rem;
+    color: #1e1e2f;
+}
+
+.welcome-text i {
+    margin-right: 10px;
+    color: #6366f1;
+}
+
+.stats-group {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: right;
+}
+
+.stat-item .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-item .value {
+    font-weight: 700;
+    color: #1e1e2f;
+}
+
+.stat-item .value-score {
+    font-weight: 700;
+    color: #10b981; /* Green color for score */
+}
+@media (max-width: 768px) {
+    nav {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important; /* Starts from left to fit more */
+        gap: 4px !important; /* Gap innum kammi panniruken */
+        padding: 10px 2px !important;
+        overflow-x: auto; /* Buttons romba adhigama irundha scroll aagum, cut aagadhu */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    nav a, nav li a, .btn-signup {
+        font-size: 9px !important; /* Slightly smaller to fit everything */
+        padding: 4px 5px !important;
+        letter-spacing: -0.5px !important; /* Tight letter spacing neenga ketta maadhiri */
+        white-space: nowrap !important;
+        display: inline-block !important;
+    }
+
+    /* Signup Button Fix - Making it visible */
+    .btn-signup {
+        background: #00d2ff !important;
+        color: #1a1a2e !important;
+        font-weight: 700 !important;
+        border-radius: 4px !important;
+        margin-left: 2px !important;
+    }
+
+    /* Removing icons on mobile to save space if needed */
+    nav i {
+        display: none !important; 
+    }
+}
+/* Meta AI Style Floating Button */
+#ai-toggle {
+    position: fixed;
+    right: 25px;
+    bottom: 30px;
+    /* Meta AI signature gradient */
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border: none;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: white;
+    /* Soft glowing shadow like Meta AI */
+    box-shadow: 0 10px 25px rgba(79, 172, 254, 0.5);
+    z-index: 10000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ai-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 15px 35px rgba(79, 172, 254, 0.7);
+}
+
+/* Chat Window - Adding Glassmorphism (Premium Look) */
+#ai-window {
+    display: none;
+    position: fixed;
+    right: 25px;
+    bottom: 110px;
+    width: 380px;
+    height: 520px;
+    background: rgba(255, 255, 255, 0.95);
+    /* Glass effect */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    z-index: 9999;
+    overflow: hidden;
+    flex-direction: column;
+    animation: metaPop 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes metaPop {
+    from { opacity: 0; transform: translateY(30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header Design like WhatsApp/Meta */
+.ai-header {
+    background: #1e1e2f;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.online-dot {
+    width: 10px;
+    height: 10px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+}
+/* Make the chat window wider */
+.chat-window {
+    width: 400px !important; /* Increased from 300px */
+    height: 500px !important;
+}
+
+/* Style the markdown points */
+.markdown-body {
+    font-size: 1rem; /* Slightly bigger text */
+    line-height: 1.6; /* More space between lines */
+}
+
+.markdown-body ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-body li {
+    margin-bottom: 8px; /* Space between each bullet point */
+}
+
+.markdown-body strong {
+    color: #1e293b;
+    display: inline-block;
+    margin-top: 5px;
+}
+.ai-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+.ai-content li {
+    margin-bottom: 8px;
+}
+.ai-content strong {
+    display: block;
+    margin-top: 10px;
+}
+/* Glassmorphism Effect for Chat Window */
+#ai-window {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* User Bubble Gradient */
+.user-content {
+    background: linear-gradient(135th, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Clear Button Style */
+.clear-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+            </style>
+        </head>
+        <body>
+
+        <header class="navbar" style="padding: 5px 60px;">
+            <div class="logo" style="display:flex;align-items:center;gap:12px;">
+                <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px;width:65px;object-fit:contain;">
+                <span style="font-size:1.9rem;font-weight:800;color:#00d2ff;letter-spacing:1px;vertical-align:middle;font-family:Poppins,sans-serif;text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+            </div>
+            <nav>
+    <a href="{% url 'home_view' %}">Home</a>
+
+    <a href="{% url 'dashboard_view' %}"><i class="fas fa-columns"></i> Dashboard</a>
+    <a href="#features">Features</a>
+    
+    <a href="{% url 'login' %}">Login</a> 
+    <li class="nav-item">
+    <a href="{% url 'logout_view' %}" class="nav-link" style="color: #ff4d4d;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</li>
+    <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
+    
+</nav>
+        </header>
+
+<style>
+body { background-color: #f4f7fb; }
+</style>
+
+
+
+<style>
+    .hub-container {
+        padding: 50px 5%;
+        max-width: 1200px;
+        margin: 0 auto;
+        min-height: 80vh;
+    }
+    
+    .hub-header {
+        text-align: center;
+        margin-bottom: 50px;
+        color: #1e1e2f;
+    }
+    
+    .hub-header h1 {
+        font-size: 2.8rem;
+        background: linear-gradient(90deg, #1e1e2f, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+    
+    .test-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .test-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        border-color: #3b82f6;
+    }
+    
+    .test-card i.main-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #3b82f6;
+    }
+
+    .test-card h3 {
+        color: #1e293b;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .test-card p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+    
+    .meta-tags {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+    }
+    
+    .meta-tag {
+        background: #f1f5f9;
+        padding: 5px 12px;
+        border-radius: 20px;
+    }
+
+    .meta-tag.time { background: #fee2e2; color: #991b1b; }
+    .meta-tag.qs { background: #dbeafe; color: #1e40af; }
+    
+
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+
+<div class="hub-container">
+    <div class="hub-header">
+        <h1>Comprehensive Skill Assessment</h1>
+        <p style="color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 15px auto;">Select a category to begin your timed 45-minute assessment containing both multiple-choice and coding questions.</p>
+    </div>
+
+    <div class="hub-grid">
+        <!-- Python -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/python/'">
+            <i class="fab fa-python main-icon" style="color: #3776ab;"></i>
+            <h3>Python</h3>
+            <p>Validate your core Python logic, data structures, and advanced syntax.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- Java -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/java/'">
+            <i class="fab fa-java main-icon" style="color: #f89820;"></i>
+            <h3>Java</h3>
+            <p>Test your knowledge of OOP, multithreading, and JVM concepts.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+        
+        <!-- C -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/c/'">
+            <i class="fas fa-code main-icon" style="color: #64748b;"></i>
+            <h3>C Programming</h3>
+            <p>Assess your grasp of pointers, memory management, and C syntax.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- C# -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/csharp/'">
+            <i class="fab fa-microsoft main-icon" style="color: #239120;"></i>
+            <h3>C# (.NET)</h3>
+            <p>Evaluate your skills in C# and the .NET framework fundamentals.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- C++ -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/cpp/'">
+            <svg viewBox="0 0 24 24" width="48" height="48" stroke="#00599C" stroke-width="2" fill="none" class="main-icon" style="margin-left:auto;margin-right:auto;display:block;margin-bottom:20px;">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            <h3>C++</h3>
+            <p>Advanced tests on C++ OOP, STL, and memory optimization.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- Aptitude -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/aptitude/'">
+            <i class="fas fa-brain main-icon" style="color: #8b5cf6;"></i>
+            <h3>Aptitude</h3>
+            <p>Numerical, Logical Data, and Quantitative Reasoning assessment.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- DSA (Data Structures & Algorithms) -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/dsa/'">
+            <i class="fas fa-network-wired main-icon" style="color: #d946ef;"></i>
+            <h3>DSA</h3>
+            <p>Master trees, graphs, dynamic programming, and algorithmic efficiency.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/javascript/'">
+            <i class="fab fa-js main-icon" style="color: #facc15;"></i>
+            <h3>JavaScript</h3>
+            <p>Evaluate your mastery of ES6+, closures, promises, and DOM manipulation.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+        <!-- SQL Database -->
+        <div class="test-card" onclick="window.location.href='/skill-tests-instructions/sql/'">
+            <i class="fas fa-database main-icon" style="color: #0ea5e9;"></i>
+            <h3>SQL Database</h3>
+            <p>Test advanced query logic, JOINS, indexing, and relational architecture.</p>
+            <div class="meta-tags">
+                <span class="meta-tag qs"><i class="fas fa-list-ul"></i> 40 Qs</span>
+                <span class="meta-tag time"><i class="fas fa-clock"></i> 45 Mins</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message|escapejs }}");
+    {% endfor %}
+</script>
+{% endif %}
+
+</body>
+</html>

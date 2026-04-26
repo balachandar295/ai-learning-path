@@ -1,0 +1,289 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Categories | AI Learning Path</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fb;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navbar (Exactly like Home Page) */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #1e1e2f;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: #00d4ff;
+            font-size: 22px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: 400;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #00d4ff;
+        }
+
+        .btn-logout {
+            color: #ff4d4d !important;
+            font-weight: bold;
+        }
+
+        /* Hero Section (Gradient Theme) */
+        .hero {
+            text-align: center;
+            padding: 100px 20px 150px;
+            background: linear-gradient(135deg, #00d4ff, #1e1e2f);
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: auto;
+            opacity: 0.9;
+        }
+
+        /* Features/Categories Section */
+        .categories-container {
+            padding: 0 60px 80px;
+            margin-top: -80px;
+            /* Cards overlap the hero section */
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        /* Card Design (Sync with Home Page) */
+        .feature-card {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            border: none;
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #00d4ff, #6c63ff);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card i {
+            font-size: 45px;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            color: #1e1e2f;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: #000;
+            color: #aaa;
+            text-align: center;
+            padding: 30px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .categories-container {
+                padding: 0 20px 50px;
+            }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+
+<body>
+
+    <header class="navbar" style="padding: 5px 60px; height: auto;">
+        <a href="/home/" class="logo" style="text-decoration:none; display:flex; align-items:center; gap:12px;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <nav>
+            <a href="/home/">Home</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="{% url 'progress_view' %}">Progress</a>
+            <a href="/aptitude/" style="color: #00d4ff;">Aptitude</a>
+            <a href="/logout/" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Aptitude Skill Booster</h1>
+        <p>Select a category to sharpen your logical thinking and mathematical speed. AI-powered practice for every
+            topic.</p>
+    </section>
+
+    <section class="categories-container">
+        <div class="feature-grid">
+
+            <a href="{% url 'arithmetic_topics' %}" class="feature-card">
+                <i class="fas fa-calculator"></i>
+                <h3>Arithmetic</h3>
+                <p>Percentage, Profit & Loss, Time & Work, Interest, and Number Systems.</p>
+            </a>
+
+            <a href="{% url 'logical_reasoning_topics' %}" class="feature-card">
+                <i class="fas fa-brain"></i>
+                <h3>Logical Reasoning</h3>
+                <p>Coding-Decoding, Series completion, and Direction sense.</p>
+            </a>
+
+            <a href="{% url 'data_interpretation_topics' %}" class="feature-card">
+                <i class="fas fa-chart-pie"></i>
+                <h3>Data Interpretation</h3>
+                <p>Master Bar Graphs, Pie Charts, Tables, and Complex Data Sets.</p>
+            </a>
+
+            <a href="{% url 'verbal_reasoning_topics' %}" class="feature-card">
+                <i class="fas fa-font"></i>
+                <h3>Verbal Reasoning</h3>
+                <p>Grammar rules, Vocabulary, Reading Comprehension.</p>
+            </a>
+
+            <a href="{% url 'non_verbal_reasoning_topics' %}" class="feature-card">
+                <i class="fas fa-shapes"></i>
+                <h3>Non-Verbal Reasoning</h3>
+                <p>Mirror images, Pattern completion, Paper folding/cutting, Cubes & Dice, and more.</p>
+            </a>
+
+            <a href="{% url 'puzzle_topics' %}" class="feature-card">
+                <i class="fas fa-puzzle-piece"></i>
+                <h3>Puzzles</h3>
+                <p>Seating arrangement, Floor puzzles, and Complex logical grids.</p>
+            </a>
+
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 AI-Assisted Learning Path Generator | Contact: support@ailearningpath.com
+    </footer>
+
+    {% include 'ai_bot.html' %}
+</body>
+
+</html>

@@ -1,0 +1,543 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Problems | AI Learning Path</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --text-color: #262626;
+            --text-secondary: #8c8c8c;
+            --border-color: #e5e5e5;
+            --easy-color: #00b8a3;
+            --medium-color: #ffc01e;
+            --hard-color: #ff375f;
+            --primary-color: #1890ff;
+            --hover-color: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --sidebar-bg: #282828;
+            --text-color: #ffffff;
+            --text-secondary: #aaaaaa;
+            --border-color: #3e3e3e;
+            --hover-color: #3e3e3e;
+            --easy-color: #00b8a3;
+            --medium-color: #ffc01e;
+            --hard-color: #ff375f;
+            --primary-color: #1890ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #1e1e2f 0%, #0f172a 100%);
+            height: 75px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #00d4ff, #6c63ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .nav-items { display: flex; align-items: center; gap: 15px; }
+        .nav-items a { color: #e2e8f0; text-decoration: none; font-weight: 500; transition: color 0.3s; font-size: 0.95rem; }
+        .nav-items a:hover, .nav-items a.active { color: #00d2ff; }
+        .theme-toggle { background: transparent; border: none; color: #e2e8f0; font-size: 1.2rem; cursor: pointer; margin-right: 15px; }
+        .theme-toggle:hover { color: #00d2ff; }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Problem List Area */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .daily-challenge {
+            background: var(--sidebar-bg); border-radius: 12px; padding: 16px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);
+        }
+        .daily-challenge-left { display: flex; align-items: center; gap: 15px; }
+        .flame-icon { color: #ff9800; font-size: 1.8rem; }
+        .daily-title { font-weight: 600; font-size: 1.1rem; color: var(--text-color); }
+        .daily-subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+        .btn-solve { background: #00b8a3; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: background 0.2s; cursor: pointer; border: none; font-size: 0.9rem;}
+        .btn-solve:hover { background: #009988; }
+
+        .table-container {
+            background: transparent;
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Toolbar / Filters */
+        .toolbar {
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .filters { display: flex; gap: 10px; align-items: center; }
+        .filter-btn {
+            background: var(--hover-color); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); transition: all 0.2s;
+        }
+        .filter-btn:hover { background: var(--border-color); color: var(--text-color); }
+        .filter-btn.active { background: var(--text-color); color: var(--sidebar-bg); }
+        
+        .pick-one-btn {
+            background: rgba(24, 144, 255, 0.1); color: var(--primary-color); border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; display:flex; align-items:center; gap: 6px;
+        }
+        .pick-one-btn:hover { background: var(--primary-color); color: white; }
+
+        /* Search Box */
+        .search-box { padding: 6px 12px 6px 30px; border-radius: 6px; border: 1px solid var(--border-color); outline:none; background: var(--hover-color) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="%238c8c8c" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>') no-repeat 10px center; color: var(--text-color); transition: border-color 0.3s; }
+        .search-box:focus { border-color: var(--primary-color); }
+
+        /* Table */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; text-align: left; margin-top: -8px; }
+        th, td { padding: 16px 20px; font-size: 0.95rem; border-bottom: 1px solid transparent; }
+        th { color: var(--text-secondary); font-weight: 600; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        
+        tr td:first-child { border-radius: 12px 0 0 12px; }
+        tr td:last-child { border-radius: 0 12px 12px 0; }
+        
+        tbody tr { 
+            background: var(--sidebar-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        tbody tr:hover {
+            transform: scale(1.005);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: #fff;
+            z-index: 5;
+            position: relative;
+        }
+        [data-theme="dark"] tbody tr:hover { background: #333; }
+
+        .col-status { width: 70px; text-align: center; }
+        .col-title { font-weight: 600; }
+        .title-subinfo { display: flex; align-items: center; gap: 8px; }
+        .col-title a { color: var(--text-color); text-decoration: none; transition: color 0.2s; }
+        .col-title a:hover { color: var(--primary-color); }
+        .topic-badge { background: var(--hover-color); color: var(--text-secondary); font-size: 0.75rem; padding: 2px 6px; border-radius: 12px; font-weight: 400; display: inline-block;}
+        .col-acc { width: 120px; color: var(--text-secondary); }
+        .col-diff { width: 100px; font-weight: 500; }
+
+        .diff-easy { color: var(--easy-color); }
+        .diff-medium { color: var(--medium-color); }
+        .diff-hard { color: var(--hard-color); }
+
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px; font-size: 0.9rem; }
+        .page-btn { background: var(--hover-color); border: none; color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .page-btn:hover { background: var(--border-color); }
+        .page-btn.active { background: var(--primary-color); color: white; }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Right Panel */
+        .right-panel {
+            width: 300px;
+            padding: 24px;
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+        
+        .trending-box {
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .trending-box h3 { font-size: 1rem; color: var(--text-secondary); margin-bottom: 15px; font-weight: 500; }
+        .tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag {
+            background: var(--hover-color); padding: 5px 12px; border-radius: 16px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; width: 100%; border: 1px solid transparent;
+        }
+        .tag.active { border-color: var(--primary-color); color: var(--primary-color); background: rgba(24, 144, 255, 0.1); font-weight: 500; }
+        .tag:hover { background: var(--border-color); }
+        .tag span { background: #faad14; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.75rem; }
+
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 900px) {
+            body { height: auto; overflow: auto; }
+            .main-container { flex-direction: column; overflow: visible; }
+            .content { padding: 15px; overflow: visible; width: 100% !important; box-sizing: border-box; }
+            .right-panel { width: 100% !important; border-left: none; border-top: 1px solid var(--border-color); overflow: visible; box-sizing: border-box; }
+            .table-container { overflow-x: auto; width: 100%; }
+            table { min-width: 500px; }
+            .toolbar { flex-wrap: wrap; gap: 10px; }
+            .filters { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar" style="padding: 5px 40px; height: auto;">
+        <a href="/home/" class="logo" style="text-decoration:none; display:flex; align-items:center; gap:12px;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        
+        <nav class="nav-items">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+            <a href="/home/">Home</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="#" class="active">Problemset</a>
+            <a href="/logout/" class="btn-logout" style="color: #ff4757; text-decoration: none; font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <div class="main-container">
+        
+        <!-- Problem List -->
+        <main class="content">
+            
+            <div class="daily-challenge">
+                <div class="daily-challenge-left">
+                    <i class="fas fa-fire flame-icon"></i>
+                    <div>
+                        <div class="daily-title">Daily LeetCoding Challenge</div>
+                        <div class="daily-subtitle" id="daily-subtitle">Solve today's problem to maintain your streak!</div>
+                    </div>
+                </div>
+                <button class="btn-solve" onclick="pickRandomProblem(event)">Solve Now</button>
+            </div>
+
+            <div class="table-container">
+                <div class="toolbar">
+                    <div class="filters">
+                        <button class="filter-btn active" onclick="renderTable('All')">All</button>
+                        <button class="filter-btn" style="color:var(--easy-color)" onclick="renderTable('Easy')">Easy</button>
+                        <button class="filter-btn" style="color:var(--medium-color)" onclick="renderTable('Medium')">Medium</button>
+                        <button class="filter-btn" style="color:var(--hard-color)" onclick="renderTable('Hard')">Hard</button>
+                        <button class="pick-one-btn" onclick="pickRandomProblem()"><i class="fas fa-random"></i> Pick One</button>
+                    </div>
+                    <div>
+                        <input type="text" id="search-box" class="search-box" placeholder="Search questions..." onkeyup="searchProblems(this.value)">
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-status">Status</th>
+                            <th class="col-title" onclick="sortBy('title')">Title <i class="fas fa-sort"></i></th>
+                            <th class="col-acc" onclick="sortBy('acceptance')">Acceptance <i class="fas fa-sort"></i></th>
+                            <th class="col-diff" onclick="sortBy('difficulty')">Difficulty <i class="fas fa-sort"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody id="problems-body">
+                        <!-- Rendered by JS -->
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination-controls">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="right-panel">
+            <div class="trending-box">
+                <h3>Your Progress</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Solved Problems</span>
+                    <span style="color: var(--text-color); font-weight: 700; font-size: 1.1rem;" id="solved-count">0 / 400</span>
+                </div>
+                <div style="background: var(--hover-color); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+                    <div id="progress-bar" style="background: var(--easy-color); height: 100%; width: 0%; border-radius:4px; transition: width 0.3s;"></div>
+                </div>
+            </div>
+
+            <div class="trending-box">
+                <h3>Popular Topics</h3>
+                <div class="tag-list" id="topic-tags-container">
+                    <div class="tag" onclick="toggleTopicFilter('Practical', this)">Practical <span>65</span></div>
+                    <div class="tag" onclick="toggleTopicFilter('Logic', this)">Logic <span>65</span></div>
+                    <div class="tag" onclick="toggleTopicFilter('Algorithm', this)">Algorithm <span>65</span></div>
+                    <div class="tag" onclick="toggleTopicFilter('AI', this)">AI <span>70</span></div>
+                    <div class="tag" onclick="toggleTopicFilter('Game', this)">Game <span>65</span></div>
+                    <div class="tag" onclick="toggleTopicFilter('Interview', this)">Interview <span>70</span></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="{% static 'coding_problems_data.js' %}"></script>
+    <script>
+        const tbody = document.getElementById('problems-body');
+        let currentFilter = 'All';
+        let searchQuery = '';
+        let currentTopic = '';
+        let currentPage = 1;
+        const itemsPerPage = 50;
+        let currentSort = { column: 'id', order: 'asc' };
+
+        // Mock Topics & Additional Data Processing
+        // New Categories logic
+        const mockTopics = ['Practical', 'Logic', 'Algorithm', 'AI', 'Game', 'Interview'];
+        if(typeof codingProblems !== 'undefined') {
+            codingProblems.forEach(p => {
+                // Assign a random topic based on id to simulate topic tags
+                p.topic = mockTopics[p.id % mockTopics.length];
+                p.accValue = parseFloat(p.acceptance.replace('%', ''));
+            });
+        }
+
+        // Dark Mode Logic
+        function toggleTheme() {
+            const body = document.documentElement;
+            const icon = document.querySelector('.theme-toggle i');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                icon.className = 'fas fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+        // Initialize Theme from LocalStorage
+        if(localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.addEventListener('DOMContentLoaded', () => {
+                const icon = document.querySelector('.theme-toggle i');
+                if(icon) icon.className = 'fas fa-sun';
+            });
+        }
+
+        function toggleTopicFilter(topic, element) {
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            if(currentTopic === topic) {
+                currentTopic = ''; // Toggle off
+            } else {
+                currentTopic = topic;
+                element.classList.add('active'); // Toggle on
+            }
+            currentPage = 1;
+            renderTable();
+        }
+
+        function sortBy(column) {
+            if(currentSort.column === column) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.order = 'asc';
+            }
+            renderTable();
+        }
+
+        function sortData(data) {
+            return data.sort((a, b) => {
+                let valA, valB;
+                if(currentSort.column === 'title') { valA = a.title; valB = b.title; }
+                else if(currentSort.column === 'acceptance') { valA = a.accValue; valB = b.accValue; }
+                else if(currentSort.column === 'difficulty') {
+                    const weight = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
+                    valA = weight[a.difficulty]; valB = weight[b.difficulty];
+                }
+                else { valA = a.id; valB = b.id; } // Default sort by ID
+
+                if (valA < valB) return currentSort.order === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function renderTable(filter = currentFilter) {
+            currentFilter = filter;
+            
+            // Update filter buttons UI
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.innerText === filter) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            tbody.innerHTML = '';
+            
+            // Apply filtering logic
+            let filtered = codingProblems.filter(p => {
+                if (filter !== 'All' && p.difficulty !== filter) return false;
+                if (searchQuery && !p.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+                if (currentTopic && p.topic !== currentTopic) return false;
+                return true;
+            });
+
+            // Sort data
+            filtered = sortData(filtered);
+
+            // Pagination logic
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if(currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const paginated = filtered.slice(startIdx, startIdx + itemsPerPage);
+
+            paginated.forEach(p => {
+                const tr = document.createElement('tr');
+                
+                let diffClass = '';
+                if (p.difficulty === 'Easy') diffClass = 'diff-easy';
+                if (p.difficulty === 'Medium') diffClass = 'diff-medium';
+                if (p.difficulty === 'Hard') diffClass = 'diff-hard';
+
+                let statusIcon = '';
+                try {
+                    if (localStorage.getItem('solved_' + p.id) === 'true') {
+                        statusIcon = '<i class="fas fa-check-circle" style="color: #00b8a3; font-size:1.1rem;" title="Solved"></i>';
+                    }
+                } catch(e) {}
+
+                tr.innerHTML = `
+                    <td class="col-status">${statusIcon}</td>
+                    <td class="col-title">
+                        <div class="title-subinfo">
+                            <a href="/problem-solve/?id=${p.id}">${p.id}. ${p.title}</a>
+                        </div>
+                        <span class="topic-badge" style="margin-top:4px;">${p.topic}</span>
+                    </td>
+                    <td class="col-acc">${p.acceptance}</td>
+                    <td class="col-diff ${diffClass}">${p.difficulty}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination-controls');
+            container.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => { currentPage--; renderTable(); };
+            container.appendChild(prevBtn);
+
+            let start = Math.max(1, currentPage - 2);
+            let end = Math.min(totalPages, currentPage + 2);
+            
+            for(let i = start; i <= end; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${currentPage === i ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentPage = i; renderTable(); };
+                container.appendChild(btn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => { currentPage++; renderTable(); };
+            container.appendChild(nextBtn);
+        }
+
+        function searchProblems(query) {
+            searchQuery = query;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function updateProgress() {
+            let solved = 0;
+            const total = typeof codingProblems !== 'undefined' ? codingProblems.length : 300;
+            for (let i = 1; i <= total; i++) {
+                if (localStorage.getItem('solved_' + i) === 'true') {
+                    solved++;
+                }
+            }
+            const countBox = document.getElementById('solved-count');
+            const bar = document.getElementById('progress-bar');
+            if(countBox && bar) {
+                countBox.innerText = `${solved} / ${total}`;
+                bar.style.width = `${(solved/total)*100}%`;
+            }
+        }
+
+        function pickRandomProblem(e) {
+            if(e) e.preventDefault();
+            if(typeof codingProblems !== 'undefined' && codingProblems.length > 0) {
+                const unsolved = codingProblems.filter(p => localStorage.getItem('solved_' + p.id) !== 'true');
+                const list = unsolved.length > 0 ? unsolved : codingProblems;
+                const random = list[Math.floor(Math.random() * list.length)];
+                window.location.href = `/problem-solve/?id=${random.id}`;
+            }
+        }
+
+        function initDailyChallenge() {
+            if(typeof codingProblems !== 'undefined' && codingProblems.length > 0) {
+                const dateIdx = new Date().getDate() % codingProblems.length;
+                const dailyNum = codingProblems[dateIdx].id;
+                document.getElementById('daily-subtitle').innerHTML = `Solve today's selected problem <strong>#${dailyNum}</strong> to maintain your learning streak!`;
+            }
+        }
+
+        // Init
+        window.onload = () => {
+            if (typeof codingProblems !== 'undefined') {
+                renderTable();
+                updateProgress();
+                initDailyChallenge();
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Failed to load data.</td></tr>';
+            }
+        };
+    </script>
+</body>
+</html>

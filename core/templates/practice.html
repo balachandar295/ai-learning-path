@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning Practice</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #28a745;
+            --danger: #dc3545;
+            --bg: #f4f7fb;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        
+        .practice-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+
+        .practice-header { margin-bottom: 25px; }
+        .progress-track { width: 100%; height: 8px; background: #eee; border-radius: 10px; margin-top: 10px; }
+        .progress-fill { height: 100%; background: var(--primary); border-radius: 10px; transition: 0.4s; width: 0%; }
+
+        .question-text { font-size: 1.3rem; font-weight: 600; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+
+        /* Options Logic */
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option {
+            display: flex; align-items: center; padding: 16px; 
+            border: 2px solid #e2e8f0; border-radius: 12px; 
+            cursor: pointer; transition: all 0.2s ease; font-weight: 500;
+        }
+
+        .option:hover:not(.disabled) { border-color: var(--primary); background: #f8fafc; }
+        
+        /* THE COLORS - User keta logic */
+        .option.selected-correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724 !important;
+        }
+
+        .option.selected-wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #721c24 !important;
+        }
+
+        .option.disabled { pointer-events: none; }
+
+        /* Feedback/Explanation Box */
+        .feedback-box {
+            margin-top: 25px; padding: 20px; border-radius: 12px;
+            display: none; /* Initially Hidden */
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        .feedback-box.correct { background: #d4edda; border-left: 6px solid var(--success); color: #155724; }
+        .feedback-box.incorrect { background: #f8d7da; border-left: 6px solid var(--danger); color: #721c24; }
+
+        .controls { margin-top: 30px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: #e2e8f0; color: #475569; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+<div class="practice-container">
+    <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px;">
+        <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:70px; width:70px; object-fit:contain; margin-bottom:10px;">
+        <h2 style="font-size:1.6rem; font-weight:800; color:#00d2ff; letter-spacing:1px; text-shadow:0 0 15px rgba(0,210,255,0.3); font-family:Poppins,sans-serif; margin:0;">AI LEARNING PATH</h2>
+    </div>
+    <div class="practice-header">
+        <div style="display: flex; justify-content: space-between;">
+            <span id="topicName" style="color: #64748b; font-weight: 500;">Practice Mode</span>
+            <span id="qCount" style="font-weight: bold;">Question 1/1</span>
+        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+    </div>
+
+    <div id="questionText" class="question-text">Loading question...</div>
+
+    <div id="optionsList" class="options-list"></div>
+
+    <div id="feedbackBox" class="feedback-box">
+        <h4 id="feedbackStatus" style="margin: 0 0 10px 0;"></h4>
+        <p id="explanationText" style="margin: 0; line-height: 1.4;"></p>
+    </div>
+
+    <div class="controls">
+        <button id="prevBtn" class="btn btn-secondary" onclick="changeQuestion(-1)" style="visibility: hidden;">← Back</button>
+        <button id="nextBtn" class="btn btn-primary" onclick="changeQuestion(1)" style="display: none;">Next Question →</button>
+    </div>
+</div>
+
+<script>
+    // Sample Data - Idhu unga appData-la irundhu varum
+    const questions = [
+        {
+            id: 1,
+            question: "Python-la list create panna endha bracket use pannuvom?",
+            options: ["( ) Paren", "[ ] Square", "{ } Curly", "< > Angle"],
+            correct: 1, // Index of '[ ] Square'
+            explanation: "Python-la lists eppovum square brackets [ ] kulla dhaan define pannuvom. Tuples-ku dhaan ( ) use pannuvom."
+        },
+        {
+            id: 2,
+            question: "What is 10 + 20?",
+            options: ["10", "20", "30", "40"],
+            correct: 2,
+            explanation: "Idhu simple addition macha. 10 kooda 20 seththa 30 varum."
+        }
+    ];
+
+    let currentIdx = 0;
+    let answered = false;
+
+    function initPractice() {
+        answered = false;
+        const q = questions[currentIdx];
+        
+        // Update UI
+        document.getElementById('qCount').innerText = `Question ${currentIdx + 1}/${questions.length}`;
+        document.getElementById('progressBar').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+        document.getElementById('questionText').innerText = q.question;
+        
+        // Options rendering
+        const list = document.getElementById('optionsList');
+        list.innerHTML = '';
+        q.options.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.innerHTML = `<span style="margin-right:10px; opacity:0.6;">${index + 1}.</span> ${opt}`;
+            div.onclick = () => checkAnswer(index, q);
+            list.appendChild(div);
+        });
+
+        // Reset Feedback
+        document.getElementById('feedbackBox').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('prevBtn').style.visibility = currentIdx > 0 ? 'visible' : 'hidden';
+    }
+
+    function checkAnswer(selectedIdx, q) {
+        if (answered) return;
+        answered = true;
+
+        const isCorrect = selectedIdx === q.correct;
+        const options = document.querySelectorAll('.option');
+        const feedbackBox = document.getElementById('feedbackBox');
+
+        // Apply Colors to Options
+        options.forEach((opt, idx) => {
+            opt.classList.add('disabled');
+            if (idx === selectedIdx) {
+                opt.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+            }
+            // Always show the correct one in green border
+            if (idx === q.correct) {
+                opt.style.borderColor = "#28a745";
+                opt.style.borderWidth = "3px";
+            }
+        });
+
+        // Show Explanation regardless of correct/wrong
+        feedbackBox.style.display = 'block';
+        feedbackBox.className = `feedback-box ${isCorrect ? 'correct' : 'incorrect'}`;
+        document.getElementById('feedbackStatus').innerText = isCorrect ? "✅ Correct Answer!" : "❌ Incorrect Answer";
+        document.getElementById('explanationText').innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+
+        // Show Next Button
+        if (currentIdx < questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'block';
+        } else {
+            document.getElementById('nextBtn').innerText = "Finish Quiz";
+            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('nextBtn').onclick = () => alert("Quiz Finished Macha!");
+        }
+    }
+
+    function changeQuestion(step) {
+        currentIdx += step;
+        if (currentIdx < 0) currentIdx = 0;
+        if (currentIdx >= questions.length) return;
+        initPractice();
+    }
+
+    // Start
+    window.onload = initPractice;
+</script>
+
+</body>
+</html>

@@ -1,65 +1,174 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="basic.css ">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Learning Path</title>
+    <link rel="stylesheet" href="{% static 'basic.css' %}">
+    <style>
+        /* Social Login UI Enhancements */
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-login p {
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+            position: relative;
+        }
+        .social-login p::before, .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #ddd;
+        }
+        .social-login p::before { left: 0; }
+        .social-login p::after { right: 0; }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: inherit;
+            transition: 0.3s ease;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.85rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
 </head>
 <body>
-<header class="navbar">
-    <div class="logo">AI Learning Path</div>
-    <nav>
-        <a href="{% url 'home' %}">Home</a>
-        <a href="#features">Features</a>
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
-    </nav>
-</header>
+    <header class="navbar" style="padding: 5px 60px;">
+        <div class="logo" style="display:flex; align-items:center; gap:12px;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px;width:65px;object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </div>
+        <nav>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
+        </nav>
+    </header>
 
-<section id="login-section" class="auth-container">
-    <div class="auth-card">
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Login to Your Account</p>
-        <form>
-            <div class="input-group">
-                <label>Email / Username</label>
-                <input type="text" placeholder="Enter your email" required>
+    <section class="auth-container">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            {% if messages %}
+    {% for message in messages %}
+        <p style="color: #ff4d4d; text-align: center; font-size: 0.9rem;">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+            <p class="subtitle">Log in to continue your journey</p>
+
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter username" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter password" required>
+                </div>
+
+                <a href="{% url 'forgot_password' %}" class="forgot-link">Forgot Password?</a>
+
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+
+            <div class="social-login">
+                <p>OR</p>
+                
+                <form method="post" action="{% provider_login_url 'google' next='/' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="google-btn">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" 
+                             alt="Google Logo" width="20px"> 
+                        Continue with Google
+                    </button>
+                </form>
             </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" placeholder="Enter password" required>
-            </div>
-            <div class="extra-options">
-                <label><input type="checkbox"> Remember Me</label>
-                <a href="#">Forgot Password?</a>
-            </div>
-            <button type="button" class="auth-btn" onclick="loginUser()">Login</button>
 
+            <p class="redirect">New user? <a href="{% url 'register' %}">Create an account</a></p>
+        </div>
+    </section>
 
-<script>
-function loginUser() {
-    // 1. Get user input
-    const emailInput = document.querySelector('input[type="email"]') || document.querySelector('input[type="text"]');
-    const email = emailInput.value;
-    
-    // 2. Validation
-    if (email.trim() === "") {
-        alert("Please enter your email");
-        return;
-    }
+    <script>
+        // Clear all AI chat histories whenever the login screen is loaded
+        // This ensures the next user starts with a completely fresh AI chat.
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if (key && (key.startsWith('ai_chat_history_') || key.startsWith('ai_chat_archive_'))) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
 
-    // 3. Save to localStorage
-    localStorage.setItem("userEmail", email);
-    console.log("User logged in and data saved:", email);
-
-    // 4. REDIRECT FIX: Django-vukku puriyura maadhiri path-ai maathunga
-    // .html extension-ai kandippaa remove pannanum
-    window.location.href = "/assessment/?email=" + encodeURIComponent(email); 
-}
-
-// Form 'Enter' key press panna redirect aaga idhu help pannum
-document.querySelector('form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    loginUser();
-});
-</script>
-
-<p class="redirect">New user? <a href="{% url 'register' %}">Create an account</a></p>
-</section>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const username = document.querySelector('input[name="username"]').value;
+            localStorage.setItem("username", username);
+            console.log("Session initiated for: " + username);
+        });
+    </script>
 </body>
+</html>

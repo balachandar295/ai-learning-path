@@ -1,0 +1,949 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Solver | AI Learning Path</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-panel: #ffffff;
+            --border: #f0f0f0;
+            --text-primary: #262626;
+            --text-secondary: #8c8c8c;
+            --easy: #00b8a3;
+            --medium: #ffc01e;
+            --hard: #ff375f;
+            --btn-green: #2db55d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background-color: #f7f8fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #1a1f36;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00d2ff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-center { display: flex; gap: 15px; align-items: center; margin-left: auto; margin-right: 30px; }
+        
+        .run-btn {
+            background: #f0f0f0;
+            border: none; padding: 6px 16px; border-radius: 6px;
+            font-weight: 600; color: var(--text-primary); cursor: pointer;
+            transition: 0.2s;
+        }
+        .run-btn:hover { background: #e0e0e0; }
+        
+        .submit-btn {
+            background: var(--btn-green);
+            border: none; padding: 6px 16px; border-radius: 6px;
+            font-weight: 600; color: white; cursor: pointer;
+            transition: 0.2s;
+        }
+        .submit-btn:hover { filter: brightness(1.1); }
+
+        /* Split Screen Container */
+        .split-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .resizer {
+            width: 8px;
+            cursor: col-resize;
+            background: transparent;
+            border-radius: 4px;
+            transition: background 0.2s;
+            margin: 0 -4px; /* Cover the gap */
+            z-index: 10;
+        }
+        .resizer:hover, .resizer.resizing {
+            background: #d9d9d9;
+        }
+
+        .left-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; }
+        .right-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; }
+
+        /* Panel Headers */
+        .panel-header {
+            background: #fafafa;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .panel-header .active { color: var(--text-primary); border-bottom: 2px solid var(--text-primary); padding-bottom: 8px; margin-bottom: -10px; }
+
+        /* Scrollable Content */
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* Problem Styling */
+        #prob-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .diff-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-bottom: 24px; background: #f0f0f0;
+        }
+        
+        .diff-Easy { color: var(--easy); background: rgba(0, 184, 163, 0.1); }
+        .diff-Medium { color: var(--medium); background: rgba(255, 192, 30, 0.1); }
+        .diff-Hard { color: var(--hard); background: rgba(255, 55, 95, 0.1); }
+
+        .desc-text { font-size: 0.95rem; line-height: 1.6; color: #3c3c3c; margin-bottom: 30px; }
+        
+        .example-box {
+            margin-bottom: 24px;
+        }
+        .example-box p { font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+        .example-pre {
+            background: #f7f8fa;
+            border-left: 3px solid var(--border);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        /* Right Panel Code Editor */
+        .editor-header {
+            padding: 8px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+
+        select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #d9d9d9;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea {
+            width: 100%;
+            flex: 1;
+            border: none;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            background: #ffffff;
+            color: #262626;
+            line-height: 1.5;
+        }
+
+        .CodeMirror {
+            flex: 1;
+            height: 100%;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            padding: 10px;
+        }
+
+        .v-resizer {
+            height: 14px;
+            cursor: row-resize;
+            background: #fafafa;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .v-resizer:hover, .v-resizer.resizing {
+            background: #e8e8e8;
+        }
+
+        /* Console Output */
+        .console-panel {
+            height: 180px;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .console-header {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+        .console-output {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #434343;
+        }
+
+        /* MOCK INTERVIEW MODE STYLES */
+        .interview-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: #ffffff;
+            z-index: 1000;
+            display: none; /* Show only in resumeMode */
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #6366f1;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            flex: 1;
+            background: #f1f5f9;
+        }
+
+        .video-box {
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 4px solid #fff;
+        }
+
+        .video-box video, .video-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-label {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        .interview-controls {
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cam-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cam-btn:hover { transform: scale(1.05); background: #4f46e5; }
+        
+        /* TALKING ANIMATION FOR INTERVIEWER */
+        .ai-interviewer.speaking {
+            animation: interviewerTalking 0.2s infinite alternate ease-in-out;
+        }
+        @keyframes interviewerTalking {
+            0% { filter: brightness(1); transform: scale(1); }
+            100% { filter: brightness(1.2); transform: scale(1.01); }
+        }
+</style>
+</head>
+<body>
+
+    <!-- Mock Interview Video Overlay -->
+    <div id="interviewOverlay" class="interview-overlay">
+        <div class="panel-header" style="background: #1e1e2f; color: white;">
+            <span><i class="fas fa-video"></i> AI Mock Interview Session</span>
+            <button onclick="closeInterviewOverlay()" style="margin-left: auto; background: none; border: none; color: white; cursor: pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="video-grid">
+            <div class="video-box">
+                <video id="userCam" autoplay playsinline muted></video>
+                <div class="video-label"><i class="fas fa-user"></i> Candidate (You)</div>
+            </div>
+            <div class="video-box">
+                <img src="/static/ai_interviewer_pro.png" id="interviewerImg" class="ai-interviewer">
+                <div class="video-label"><i class="fas fa-robot"></i> AI Recruiter (Active)</div>
+            </div>
+        </div>
+        <div class="interview-controls">
+            <button class="cam-btn" id="startCamBtn"><i class="fas fa-camera"></i> Enable Camera</button>
+            <button class="cam-btn" style="background: #10b981;" onclick="startAIDialogue()"><i class="fas fa-microphone"></i> Start Interview</button>
+            <button class="cam-btn" style="background: #ef4444;" onclick="closeInterviewOverlay()">End Session</button>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" style="padding: 5px 40px; height: auto;">
+        <a href="/home/" class="nav-logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        
+        <div class="nav-center">
+            <button class="run-btn" id="aiAssistBtn" style="color: #6366f1;"><i class="fas fa-magic" style="margin-right: 6px;"></i> AI Assist</button>
+            <button class="run-btn" id="runCodeBtn"><i class="fas fa-play" style="color: #2db55d; margin-right: 6px;"></i> Run</button>
+            <button class="submit-btn" id="submitCodeBtn"><i class="fas fa-cloud-upload-alt" style="margin-right: 6px;"></i> Submit</button>
+        </div>
+
+        <a href="/logout/" style="color: #ff4757; text-decoration: none; font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="split-container">
+        
+        <!-- Left Panel: Problem Description -->
+        <div class="panel left-panel" id="left-panel">
+            <div class="panel-header">
+                <div class="active"><i class="fas fa-file-alt" style="color: #1890ff; margin-right: 6px;"></i> Description</div>
+            </div>
+            <div class="panel-content">
+                <h1 id="prob-title">Loading...</h1>
+                <div id="prob-diff" class="diff-badge">...</div>
+                
+                <div id="prob-desc" class="desc-text">
+                    Fetching problem details...
+                </div>
+
+                <div id="prob-examples">
+                    <!-- Examples injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Draggable Resizer -->
+        <div class="resizer" id="drag-resizer"></div>
+
+        <!-- Right Panel: Editor -->
+        <div class="panel right-panel" id="right-panel">
+            <div class="editor-header">
+                <select id="lang-select">
+                    <option value="python">Python3</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="c">C</option>
+                    <option value="csharp">C#</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="php">PHP</option>
+                    <option value="kotlin">Kotlin</option>
+                    <option value="swift">Swift</option>
+                    <option value="go">Go</option>
+                </select>
+            </div>
+            
+            <div class="editor-area">
+                <textarea id="code-editor" spellcheck="false">def solve():
+    pass
+
+# Test your code here
+print("Code executed successfully!")</textarea>
+            </div>
+
+            <!-- Vertical Resizer -->
+            <div class="v-resizer" id="v-resizer" title="Drag to resize console">
+                <div style="width: 30px; height: 4px; background: #cccccc; border-radius: 2px;"></div>
+            </div>
+
+            <!-- Console -->
+            <div class="console-panel" id="console-panel">
+                <div class="console-header">
+                    <div><i class="fas fa-terminal"></i> Test Result</div>
+                    <div id="exec-status"></div>
+                </div>
+                <div class="console-output" id="console-output">
+Run your code to see outputs...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Data Import -->
+    <script src="{% static 'coding_problems_data.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script>
+        // 1. Fetch Problem Data
+        const urlParams = new URLSearchParams(window.location.search);
+        const probId = urlParams.get('id') || '1';
+        const isResumeMode = sessionStorage.getItem('resumeMode') === 'true';
+        const resumeName = sessionStorage.getItem('resumeName') || 'Resume';
+        
+        const problemBox = document.getElementById('prob-title');
+        const diffBox = document.getElementById('prob-diff');
+        const descBox = document.getElementById('prob-desc');
+        const examplesBox = document.getElementById('prob-examples');
+
+        let currentProb = null;
+
+        if (isResumeMode) {
+            document.title = "AI Mock Interview | AI Learning Path";
+            // MOCK INTERVIEW MODE UI
+            problemBox.innerText = "Mock Interview: " + resumeName;
+            diffBox.innerText = "Interviewer Active";
+            diffBox.className = "diff-badge diff-Medium";
+            descBox.innerHTML = `
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #6366f1; margin-bottom: 20px;">
+                    <h3 style="color: #1e293b; margin-bottom: 10px;"><i class="fas fa-robot"></i> AI Interviewer Note</h3>
+                    <p>I have analyzed your resume (<b>${resumeName}</b>). I will now conduct a mock interview based on your skills and background.</p>
+                </div>
+                <h3>Interview Instructions:</h3>
+                <ul>
+                    <li>The AI will ask you technical and behavioral questions.</li>
+                    <li>Write your solutions or code in the editor on the right.</li>
+                    <li>Use <b>AI Assist</b> if you need a hint or logical breakdown.</li>
+                </ul>
+            `;
+            // Update Tab Label
+            document.querySelector('.panel-header .active').innerHTML = '<i class="fas fa-user-tie" style="color: #6366f1; margin-right: 6px;"></i> Interview Guide';
+
+            examplesBox.innerHTML = `
+                <div class="example-box">
+                    <p>Current Status:</p>
+                    <div class="example-pre" style="color: #6366f1; font-weight: 600;">
+                        Wait for AI to ask the first question or start coding a project you've mentioned in your resume.
+                    </div>
+                </div>
+            `;
+            document.getElementById('aiAssistBtn').innerHTML = '<i class="fas fa-user-tie"></i> AI Interviewer';
+        } else if (typeof codingProblems !== 'undefined') {
+            currentProb = codingProblems.find(p => p.id == probId);
+            
+            if (currentProb) {
+                problemBox.innerText = `${currentProb.id}. ${currentProb.title}`;
+                diffBox.innerText = currentProb.difficulty;
+                diffBox.className = `diff-badge diff-${currentProb.difficulty}`;
+                
+                if (currentProb.description) {
+                    descBox.innerHTML = currentProb.description;
+                }
+
+                if (currentProb.examples && currentProb.examples.length > 0) {
+                    let exHtml = '';
+                    currentProb.examples.forEach((ex, idx) => {
+                        exHtml += `
+                        <div class="example-box">
+                            <p>Example ${idx + 1}:</p>
+                            <div class="example-pre">
+<strong>Input:</strong> ${ex.input}<br>
+<strong>Expected Output:</strong> ${ex.output}<br>
+${ex.explanation ? `<strong>Explanation:</strong> ${ex.explanation}` : ''}
+                            </div>
+                        </div>`;
+                    });
+                    examplesBox.innerHTML = exHtml;
+                }
+            } else {
+                problemBox.innerText = "Problem Not Found";
+                descBox.innerText = "The requested problem ID does not exist in our database.";
+            }
+        }
+
+        // 2. Execution Logic
+        const runBtn = document.getElementById('runCodeBtn');
+        const submitBtn = document.getElementById('submitCodeBtn');
+        const editorTextArea = document.getElementById('code-editor');
+        const consoleOut = document.getElementById('console-output');
+        const statusOut = document.getElementById('exec-status');
+        
+        let editorInstance = null;
+
+        // Init CodeMirror when properties are set
+        window.addEventListener('load', () => {
+            editorInstance = CodeMirror.fromTextArea(editorTextArea, {
+                mode: "python",
+                lineNumbers: true,
+                indentUnit: 4,
+                viewportMargin: Infinity
+            });
+            document.querySelector('.CodeMirror').style.height = '100%';
+        });
+
+        document.getElementById('lang-select').addEventListener('change', function(e) {
+            if(!editorInstance) return;
+            let val = e.target.value;
+            let mode = "python";
+            if(val === 'cpp' || val === 'c' || val === 'java') mode = "text/x-c++src";
+            if(val === 'javascript' || val === 'typescript') mode = "javascript";
+            editorInstance.setOption("mode", mode);
+        });
+
+        async function executeCode(isSubmit = false) {
+            const lang = document.getElementById('lang-select').value;
+            const code = editorInstance ? editorInstance.getValue().trim() : editorTextArea.value.trim();
+
+            if (!code) {
+                consoleOut.innerText = "Please write some code first.";
+                consoleOut.style.color = "#ff375f";
+                return;
+            }
+
+            if (lang !== 'python') {
+                consoleOut.innerHTML = `<span style="color:#ffc01e">Support for ${lang} is simulated. Only Python is connected to a live interpreter right now. Please select Python3 to test your algorithm via the backend compiler.</span>`;
+                return;
+            }
+
+            consoleOut.innerText = "Running...";
+            consoleOut.style.color = "#8c8c8c";
+            statusOut.innerText = "Executing";
+            statusOut.style.color = "#ffc01e";
+
+            try {
+                const res = await fetch('/run-python/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+                const data = await res.json();
+                
+                if (data.error && data.error.trim().length > 0) {
+                    consoleOut.innerText = data.output + "\n" + data.error;
+                    consoleOut.style.color = "#ff375f"; // Hard Red for Errors
+                    statusOut.innerText = "Runtime Error";
+                    statusOut.style.color = "#ff375f";
+                } else {
+                    let casesHtml = '';
+                    if (currentProb && currentProb.examples) {
+                        casesHtml = '<div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px;"><strong style="font-size:0.9rem; color:var(--text-secondary);">Test Cases:</strong></div>';
+                        currentProb.examples.forEach((ex, idx) => {
+                            casesHtml += `<div style="margin-top: 10px; padding: 12px; background: rgba(45, 181, 93, 0.05); border-left: 4px solid #2db55d; border-radius: 4px; font-family: monospace;">
+                                <div style="color:#2db55d; font-weight: 700; margin-bottom: 5px;"><i class="fas fa-check-circle"></i> Case ${idx+1}: Accepted</div>
+                                <div style="font-size: 0.85rem; color: #666;">
+                                    <div><strong>Input:</strong> ${ex.input}</div>
+                                    <div><strong>Output:</strong> ${ex.output}</div>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    
+                    const rawOutputHtml = `<div style="margin-bottom: 10px;"><strong style="font-size:0.9rem; color:var(--text-secondary);">Standard Output:</strong></div><pre style="background:#f0f0f0; padding:12px; border-radius:6px; font-size:0.9rem; color:#111; overflow-x:auto;">${data.output || '(No output)'}</pre>`;
+                    
+                    consoleOut.innerHTML = rawOutputHtml + casesHtml;
+                    
+                    if (isSubmit) {
+                        statusOut.innerText = "Accepted";
+                        statusOut.style.color = "#2db55d";
+                        try {
+                            localStorage.setItem('solved_' + probId, 'true');
+                        } catch(e) {}
+                        
+                        // STREAK API CALL
+                        try {
+                            // Fetch CSRF Token
+                            let csrfToken = '';
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.startsWith('csrftoken=')) {
+                                    csrfToken = cookie.substring('csrftoken='.length, cookie.length);
+                                    break;
+                                }
+                            }
+
+                            const streakRes = await fetch('/api/update-streak/', {
+                                method: 'POST',
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrfToken
+                                },
+                                body: JSON.stringify({ prob_id: probId })
+                            });
+                            const streakData = await streakRes.json();
+                            if (streakData.status === 'success' && streakData.streak_updated) {
+                                showStreakBadge(streakData.streak);
+                            }
+                        } catch (err) {
+                            console.error('Streak check failed:', err);
+                        }
+                    } else {
+                        statusOut.innerText = "Finished";
+                        statusOut.style.color = "#1890ff";
+                    }
+                }
+            } catch (err) {
+                consoleOut.innerText = "Network Error! Could not reach Python execution server.";
+                consoleOut.style.color = "#ff375f";
+                statusOut.innerText = "Connection Failed";
+                statusOut.style.color = "#ff375f";
+            }
+        }
+
+        runBtn.addEventListener('click', () => executeCode(false));
+        submitBtn.addEventListener('click', () => executeCode(true));
+
+        const aiBtn = document.getElementById('aiAssistBtn');
+        aiBtn.addEventListener('click', async () => {
+            const lang = document.getElementById('lang-select').options[document.getElementById('lang-select').selectedIndex].text;
+            const code = editorInstance ? editorInstance.getValue().trim() : editorTextArea.value.trim();
+            const title = currentProb ? currentProb.title : "Mock Interview";
+
+            consoleOut.innerText = isResumeMode ? "AI Interviewer is analyzing your profile and starting the session..." : "AI Mentor is analyzing your code and generating a hint... please wait...";
+            consoleOut.style.color = "#1890ff";
+            statusOut.innerText = "Interviewer Thinking";
+            statusOut.style.color = "#1890ff";
+
+            let prompt = "";
+            if (isResumeMode) {
+                prompt = `You are a professional Mock Interviewer. I have uploaded my resume named '${resumeName}'. 
+                Based on this resume, please ask me a challenging technical interview question that matches my skills. 
+                If I have written any code below, evaluate it as an interviewer and give me constructive feedback or the next follow-up question.
+                My current code is:\n\n${code}\n\nPlease keep the tone professional and helpful. Focus on logic and optimization.`;
+            } else {
+                prompt = `I am trying to solve the problem '${title}' in ${lang}. Here is my current code:\n\n${code}\n\nDo NOT write the code for me! Instead, provide a step-by-step logical breakdown of how I should approach this problem. Give me a structured thought process (Step 1, Step 2, etc.) to help increase my logical thinking and algorithm design skills. Keep it encouraging and conceptual!`;
+            }
+
+            let csrfToken = '';
+            try {
+                // If there's a CSRF cookie (from Django), we extract it to send.
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith('csrftoken=')) {
+                        csrfToken = cookie.substring('csrftoken='.length, cookie.length);
+                        break;
+                    }
+                }
+            } catch(e) {}
+
+            try {
+                const res = await fetch('/ai-chat/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ 
+                        message: prompt,
+                        mode: isResumeMode ? 'interviewer' : 'mentor'
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.response) {
+                    consoleOut.innerText = "🔥 AI Mentor Hint:\n\n" + data.response;
+                    consoleOut.style.color = "#ffc01e"; // Golden color for AI hint
+                    statusOut.innerText = "AI Hint Received";
+                    statusOut.style.color = "#ffc01e";
+                } else {
+                    consoleOut.innerText = "Error: Did not receive AI response.";
+                    consoleOut.style.color = "#ff375f";
+                }
+            } catch (err) {
+                consoleOut.innerText = "Network Error! Could not reach AI server.";
+                consoleOut.style.color = "#ff375f";
+                statusOut.innerText = "Connection Failed";
+                statusOut.style.color = "#ff375f";
+            }
+        });
+
+        // Split Screen Drag Resizer Logic
+        const dragResizer = document.getElementById('drag-resizer');
+        const leftPanel = document.getElementById('left-panel');
+        let isResizing = false;
+
+        dragResizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            dragResizer.classList.add('resizing');
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const containerWidth = document.querySelector('.split-container').offsetWidth;
+            let newPercent = (e.clientX / containerWidth) * 100;
+            if (newPercent < 20) newPercent = 20;
+            if (newPercent > 80) newPercent = 80;
+            
+            leftPanel.style.flex = `0 0 ${newPercent}%`;
+            leftPanel.style.minWidth = 'unset'; // Override the CSS min-width
+
+            // Refresh codemirror so it recalculates width
+            if (editorInstance) editorInstance.refresh();
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = 'default';
+                dragResizer.classList.remove('resizing');
+            }
+        });
+
+        // Vertical Resizer Logic
+        const vResizer = document.getElementById('v-resizer');
+        const consolePanel = document.getElementById('console-panel');
+        const rightPanel = document.getElementById('right-panel');
+        let isVResizing = false;
+
+        vResizer.addEventListener('mousedown', (e) => {
+            isVResizing = true;
+            document.body.style.cursor = 'row-resize';
+            vResizer.classList.add('resizing');
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isVResizing) return;
+            const rightPanelRect = rightPanel.getBoundingClientRect();
+            
+            // Calculate new height of bottom console from the bottom edge of right panel
+            let newHeight = rightPanelRect.bottom - e.clientY;
+            
+            // Constrain constraints
+            if (newHeight < 40) newHeight = 40;
+            const maxHeight = rightPanelRect.height - 100; // Leave space for editor header and a bit of code
+            if (newHeight > maxHeight) newHeight = maxHeight;
+
+            consolePanel.style.height = `${newHeight}px`;
+
+            if (editorInstance) editorInstance.refresh();
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isVResizing) {
+                isVResizing = false;
+                document.body.style.cursor = 'default';
+                vResizer.classList.remove('resizing');
+            }
+        });
+
+        // Note: CodeMirror handles its own indentation natively, so basic textarea support was safely removed.
+
+        function showStreakBadge(streakCount) {
+            const badge = document.createElement('div');
+            badge.innerHTML = `
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="font-size:2.2rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));">🔥</div>
+                    <div>
+                        <h4 style="margin:0; font-size:1.1rem; color:#fff; font-family:'Orbitron', sans-serif;">STREAK UPDATED!</h4>
+                        <p style="margin:0; font-size:0.9rem; color:#ffe8e8; font-weight:500;">You are on a ${streakCount} day resolving streak!</p>
+                    </div>
+                </div>
+            `;
+            badge.style.position = 'fixed';
+            badge.style.top = '85px';
+            badge.style.right = '-400px';
+            badge.style.background = 'linear-gradient(135deg, #FF416C, #FF4B2B)';
+            badge.style.padding = '16px 24px';
+            badge.style.borderRadius = '12px';
+            badge.style.boxShadow = '0 10px 25px rgba(255,75,43,0.4)';
+            badge.style.zIndex = '9999';
+            badge.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            document.body.appendChild(badge);
+            
+            setTimeout(() => { badge.style.right = '20px'; }, 50);
+            setTimeout(() => { 
+                badge.style.right = '-400px'; 
+                setTimeout(() => badge.remove(), 600);
+            }, 4000);
+        }
+
+        // 3. Mock Interview / Camera Logic
+        const overlay = document.getElementById('interviewOverlay');
+        const userVideo = document.getElementById('userCam');
+        const interviewerImg = document.getElementById('interviewerImg');
+        const startCamBtn = document.getElementById('startCamBtn');
+
+        if (isResumeMode) {
+            // Automatically open interview overlay directly
+            setTimeout(() => {
+                openInterviewOverlay();
+            }, 400);
+        }
+
+        function openInterviewOverlay() {
+            overlay.style.display = 'flex';
+        }
+
+        function closeInterviewOverlay() {
+            if (isResumeMode) {
+                // If it's a mock interview, ending it should take you back home
+                sessionStorage.removeItem('resumeMode');
+                sessionStorage.removeItem('resumeName');
+                window.location.href = '/home/';
+            } else {
+                overlay.style.display = 'none';
+                if (userVideo.srcObject) {
+                    userVideo.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+
+        startCamBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                userVideo.srcObject = stream;
+                startCamBtn.innerHTML = '<i class="fas fa-check"></i> Camera Active';
+                startCamBtn.style.background = '#10b981';
+            } catch (err) {
+                alert("Camera access denied or not available.");
+            }
+        });
+
+        function startAIDialogue() {
+            if (isResumeMode) {
+                // Initial prompt to trigger the expert intro
+                const introPrompt = `START_INTERVIEW: My resume is ${resumeName}. Please start the professional interview as an Expert Conductor. Begin with the Introduction and then ask the first question: "Tell me about yourself."`;
+                
+                // Manually trigger the AI call with the special intro prompt
+                const aiBtn = document.getElementById('aiAssistBtn');
+                const consoleOut = document.getElementById('console-output');
+                consoleOut.innerText = "Initializing Professional AI Interviewer...";
+                
+                // We'll simulate the click logic but with our custom intro prompt
+                triggerAIInterview(introPrompt);
+            } else {
+                document.getElementById('aiAssistBtn').click();
+            }
+            
+            // Add talking animation
+            interviewerImg.classList.add('speaking');
+            setTimeout(() => {
+                interviewerImg.classList.remove('speaking');
+            }, 6000);
+        }
+
+        async function triggerAIInterview(customPrompt) {
+            const consoleOut = document.getElementById('console-output');
+            const statusOut = document.getElementById('exec-status');
+            
+            let csrfToken = '';
+            try {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith('csrftoken=')) {
+                        csrfToken = cookie.substring('csrftoken='.length, cookie.length);
+                        break;
+                    }
+                }
+            } catch(e) {}
+
+            try {
+                const res = await fetch('/ai-chat/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ 
+                        message: customPrompt,
+                        mode: 'interviewer'
+                    })
+                });
+                const data = await res.json();
+                if (data.response) {
+                    consoleOut.innerText = data.response;
+                    consoleOut.style.color = "#1e293b";
+                    statusOut.innerText = "Interviewer Speaking";
+                }
+            } catch (err) {
+                consoleOut.innerText = "Error initializing interview.";
+            }
+        }
+
+        // Hook into AI response to trigger talking animation
+        const originalAiClick = aiBtn.onclick;
+        aiBtn.addEventListener('click', () => {
+            if (isResumeMode) {
+                // When AI button is clicked in resume mode, sync with image animation
+                interviewerImg.classList.add('speaking');
+                // We'll need to listen for the actual fetch completion to be precise, 
+                // but for now, we use a timed class removal in the startAIDialogue
+            }
+        });
+
+    </script>
+</body>
+</html>

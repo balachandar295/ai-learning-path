@@ -1,0 +1,416 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { --primary-blue: #003366; --accent-blue: #007bff; --success-green: #28a745; --warning-yellow: #ffcc00; --danger-red: #d9534f; --light-bg: #eef2f7; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; margin: 0; padding: 20px; color: #333; }
+        .nav-container { background: var(--primary-blue); padding: 15px; border-radius: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .nav-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; border: 2px solid rgba(255,255,255,0.1); font-size: 14px; background-color: #1a4b8c; }
+        .nav-circle.active { border: 3px solid var(--warning-yellow); transform: scale(1.1); box-shadow: 0 0 12px var(--warning-yellow); }
+        .nav-circle.correct { background-color: var(--success-green); }
+        .nav-circle.incorrect { background-color: var(--danger-red); }
+        #instruction-section { background: rgba(255, 255, 255, 0.95); border-top: 8px solid var(--primary-blue); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 750px; margin: 20px auto; }
+        .instruction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .ins-item { padding: 15px; border-radius: 12px; border-left: 5px solid var(--accent-blue); background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
+        .quiz-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 800px; margin: 0 auto; }
+        .option-label { display: flex; align-items: center; padding: 15px; margin: 12px 0; border: 1px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background-color: #f0f7ff; border-color: var(--accent-blue); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 4, 20, 0.85); display: none; align-items: center; justify-content: center; z-index: 10000; }
+        .result-card { background: white; padding: 45px; border-radius: 30px; text-align: center; max-width: 480px; width: 92%; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .score-circle { width: 140px; height: 140px; border: 10px solid #f0f0f0; border-top: 10px solid var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 25px auto; font-size: 2.2rem; font-weight: bold; color: #333; }
+        .btn { padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
+        .btn-primary { background: var(--accent-blue); color: white; width: 100%; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .assessment-container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        /* DI Table Styles */
+        .di-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
+        .di-table th, .di-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .di-table th { background-color: #f8fafc; color: var(--primary-blue); font-weight: 600; }
+        .di-table tr:nth-child(even) { background-color: #fcfcfc; }
+
+        /* CSS Chart Styles */
+        .bar-chart-container { 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: space-around; 
+            height: 250px; 
+            padding: 40px 20px 20px 20px; 
+            background: #ffffff; 
+            border-bottom: 3px solid #333; 
+            border-left: 3px solid #333; 
+            margin: 30px auto; 
+            border-radius: 4px;
+            max-width: 600px;
+            position: relative;
+        }
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .bar-rect { 
+            background: linear-gradient(to top, var(--accent-blue), #4facfe); 
+            width: 45px; 
+            position: relative; 
+            border-radius: 6px 6px 0 0; 
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .bar-rect:hover { transform: scaleY(1.05); filter: brightness(1.1); }
+        .bar-value {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #444;
+        }
+        .bar-label {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .pie-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 500px;
+        }
+        .pie-chart-circle { 
+            width: 220px; 
+            height: 220px; 
+            border-radius: 50%; 
+            position: relative; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .chart-legend { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px; 
+            margin-top: 30px; 
+            font-size: 0.95rem; 
+            width: 100%;
+        }
+        .legend-item { display: flex; align-items: center; gap: 10px; padding: 5px 10px; background: #f8fafc; border-radius: 8px; }
+        .color-box { width: 16px; height: 16px; border-radius: 4px; }
+
+        .line-chart-container {
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            border: 1px solid #eee;
+        }
+
+        /* Modern Table Styles */
+        .modern-table-wrapper {
+            overflow-x: auto;
+            margin: 25px 0;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 500px;
+        }
+        .modern-table th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .modern-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+        .modern-table tr:last-child td { border-bottom: none; }
+        .modern-table tr:nth-child(even) { background: #f9fbff; }
+        .modern-table tr:hover { background: #f0f4ff; }
+
+
+        @media (max-width: 768px) {
+            .assessment-container {
+                width: 95%;
+                padding: 10px;
+            }
+            .option-btn {
+                font-size: 0.9rem;
+                padding: 12px;
+            }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <div style="text-align:center; margin-top: 30px; margin-bottom: 30px;">
+        <h2 id="levelHeader" style="color: var(--primary-blue); font-size: 1.8rem; font-weight: 700;">{{ language }} Practice: {{ level }}</h2>
+    </div>
+
+    <div id="quiz-section">
+        <div class="nav-container" id="navGrid"></div>
+        <div class="quiz-card" id="questionsContainer"></div>
+    </div>
+
+    <div id="resultModal" class="modal-overlay">
+        <div class="result-card">
+            <div id="badgeIcon" style="font-size: 5.5rem; margin-bottom: 10px;">📖</div>
+            <h2 id="resTitle" style="color: var(--success-green); margin: 0; font-size: 1.8rem;">Assessment Completed!</h2>
+            <p style="color:#666; font-size: 1.1rem; margin-top: 5px;">Level: <b>{{ level }}</b></p>
+            <div id="scoreRing" class="score-circle"><span id="resPercent">0</span>%</div>
+            <p id="resFeedback" style="font-weight: 500; font-size: 1.1rem; color: #444; margin-bottom: 30px;"></p>
+            <div id="modalActionContainer"></div>
+        </div>
+    </div>
+
+<script>
+    const rawQuestions = [
+        {% for q in questions %}
+        {
+            id: "{{ q.id }}",
+            q: "{{ q.question_text|escapejs }}",
+            options: [
+                "{{ q.option1|escapejs }}",
+                "{{ q.option2|escapejs }}",
+                "{{ q.option3|escapejs }}",
+                "{{ q.option4|escapejs }}"
+            ],
+            ans: "{{ q.correct_answer|escapejs }}",
+            exp: "{{ q.explanation|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    const totalQuestions = rawQuestions.length;
+
+    // Aptitude tracking vars
+    const currentTopicKey = "{{ topic_key }}";
+    const currentMode = "{{ mode }}";
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function loadQuestions() {
+        if(totalQuestions === 0) {
+            document.getElementById('questionsContainer').innerHTML = "<p>No questions found. Check your database.</p>";
+            return;
+        }
+        const q = rawQuestions[currentQuestionIndex];
+        
+        let gridHtml = "";
+        for (let i = 0; i < totalQuestions; i++) {
+            let status = "unanswered";
+            if (userAnswers[i] !== undefined) {
+                status = (userAnswers[i] === rawQuestions[i].ans) ? "correct" : "incorrect";
+            }
+            let active = (i === currentQuestionIndex) ? "active" : "";
+            gridHtml += `<div class="nav-circle ${status} ${active}" onclick="jumpTo(${i})">${i+1}</div>`;
+        }
+        document.getElementById('navGrid').innerHTML = gridHtml;
+
+        document.getElementById('questionsContainer').innerHTML = `
+            <p style="color:#777; font-weight:bold;">QUESTION ${currentQuestionIndex + 1} OF ${totalQuestions}</p>
+            <div class="question-content" style="margin-bottom:25px; font-size: 1.15rem; line-height: 1.6;">${q.q}</div>
+            <div class="options-list">
+
+                ${q.options.map((opt) => {
+                    let isChecked = userAnswers[currentQuestionIndex] === opt ? 'checked' : '';
+                    let disabledStr = userAnswers[currentQuestionIndex] !== undefined ? 'disabled' : '';
+                    let colorStyle = '';
+                    if (userAnswers[currentQuestionIndex] !== undefined) {
+                        if (opt === q.ans) colorStyle = 'background: #d4edda; border-color: #28a745;'; 
+                        else if (opt === userAnswers[currentQuestionIndex]) colorStyle = 'background: #f8d7da; border-color: #dc3545;';
+                    }
+                    return `
+                    <label class="option-label" style="${colorStyle}">
+                        <input type="radio" name="quiz_opt" value="${opt}" ${isChecked} ${disabledStr} onchange="save('${opt}')">
+                        <span style="margin-left:15px;">${opt}</span>
+                    </label>
+                    `;
+                }).join('')}
+            </div>
+            ${userAnswers[currentQuestionIndex] !== undefined ? `
+                <div style="margin-top:20px; padding:15px; background:#e8f4fd; border-left:5px solid var(--accent-blue); border-radius:8px;">
+                    <strong style="color:var(--primary-blue);"><i class="fas fa-lightbulb"></i> Explanation:</strong><br>
+                    <span style="color:#444; font-size:1.05rem; display:inline-block; margin-top:5px;">${q.exp}</span>
+                    <div style="margin-top:15px;">
+                        <button onclick="askAIToExplain(${currentQuestionIndex})" class="btn btn-primary" style="padding: 8px 15px; font-size: 0.9rem; width: auto; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); border:none;">
+                            <i class="fas fa-robot"></i> Ask AI for Step-by-Step Breakdown
+                        </button>
+                    </div>
+                    <div id="ai-explain-box-${currentQuestionIndex}" style="margin-top:15px; display:none; padding:15px; background: white; border-radius: 8px; border: 1px dashed #4facfe; font-size: 0.95rem; color: #333;"></div>
+                </div>
+            ` : ''}
+            <div style="margin-top:35px; display:flex; justify-content:space-between; gap:15px;">
+                <button class="btn" onclick="move(-1)" ${currentQuestionIndex === 0 ? 'disabled' : ''} style="background:#eee; flex:1;">Previous</button>
+                ${currentQuestionIndex < totalQuestions - 1 ? 
+                    `<button class="btn btn-primary" onclick="move(1)" style="flex:2;">Next</button>` : 
+                    `<button class="btn btn-primary" onclick="submitTest()" style="background:var(--success-green); flex:2;">Final Submit</button>`}
+            </div>
+        `;
+    }
+
+    function save(val) { userAnswers[currentQuestionIndex] = val; loadQuestions(); }
+    function move(step) { currentQuestionIndex += step; loadQuestions(); }
+    function jumpTo(idx) { currentQuestionIndex = idx; loadQuestions(); }
+
+    async function askAIToExplain(index) {
+        const q = rawQuestions[index];
+        const box = document.getElementById('ai-explain-box-' + index);
+        if (!box) return;
+        
+        box.style.display = 'block';
+        box.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI is analyzing the question...';
+        
+        const prompt = `I am practicing an aptitude question. Can you provide a highly detailed, step-by-step mathematical explanation?
+Question: ${q.q}
+Correct Answer: ${q.ans}
+Brief Explanation: ${q.exp}
+
+Break the math down step-by-step so a beginner can easily understand.`;
+
+        try {
+            const response = await fetch('/ai-chat/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify({ message: prompt })
+            });
+            const data = await response.json();
+            if (data.response) {
+                // Using marked.js if included in basic templates, or fallback to plain text spacing
+                let parsedHTML = data.response;
+                if (typeof marked !== 'undefined') {
+                    parsedHTML = marked.parse(data.response);
+                } else {
+                    parsedHTML = data.response.replace(/\\n/g, '<br>').replace(/\\*\\*(.*?)\\*\\*/g, '<b>$1</b>');
+                }
+                box.innerHTML = `<strong style="color:#4facfe;"><i class="fas fa-robot"></i> Step-by-Step AI Guide:</strong><br><div style="margin-top: 10px; line-height: 1.6;">${parsedHTML}</div>`;
+            } else {
+                box.innerHTML = "Sorry, I couldn't generate an explanation right now.";
+            }
+        } catch (e) {
+            box.innerHTML = "Connection error. Make sure you are logged in and the AI service is active.";
+        }
+    }
+
+    function submitTest() {
+        let scoreCount = 0;
+        rawQuestions.forEach((item, i) => {
+            if (userAnswers[i] === item.ans) {
+                scoreCount++;
+            }
+        });
+        
+        let finalPercent = Math.round((scoreCount / totalQuestions) * 100);
+
+        // Save aptitude progress natively in localStorage
+        if (finalPercent >= 50) {
+            localStorage.setItem(`aptitude_progress_${currentTopicKey}`, 100);
+        }
+
+        // Just show UI directly rather than hitting the userPreference submit_test backend
+        showResultUI(finalPercent);
+    }
+
+    function showResultUI(percent) {
+        document.getElementById('resPercent').innerText = percent;
+        const resTitle = document.getElementById('resTitle');
+        const badgeIcon = document.getElementById('badgeIcon');
+        const scoreRing = document.getElementById('scoreRing');
+        const actionContainer = document.getElementById('modalActionContainer');
+        const feedback = document.getElementById('resFeedback');
+
+        if (percent >= 50) {
+            badgeIcon.innerText = "🏆";
+            resTitle.innerText = "Assessment Passed!";
+            resTitle.style.color = "var(--success-green)";
+            scoreRing.style.borderColor = "var(--success-green)";
+            feedback.innerText = "Congratulations! You've mastered this topic.";
+            actionContainer.innerHTML = `<button onclick="window.location.href='/arithmetic/progress/'" class="btn btn-primary">See Your Progress</button>`;
+        } else {
+            badgeIcon.innerText = "✍️";
+            resTitle.innerText = percent < 40 ? "Retake Required" : "Keep Practicing";
+            resTitle.style.color = "var(--danger-red)";
+            scoreRing.style.borderColor = "var(--danger-red)";
+            feedback.innerText = "Don't give up! Retake the test to improve your score.";
+            actionContainer.innerHTML = `
+                <button onclick="window.location.reload()" class="btn btn-primary" style="background:var(--warning-yellow); color:black;">Retake Test</button>
+                <button onclick="window.location.href='/aptitude/arithmetic/'" class="btn" style="margin-top:10px; width:100%; border:1px solid #ccc;">Back to Topics</button>
+            `;
+        }
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    // Auto-load questions on start
+    window.onload = loadQuestions;
+</script>
+
+</body>
+</html>

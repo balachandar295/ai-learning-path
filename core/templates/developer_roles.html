@@ -1,0 +1,362 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25 Career Paths & Technologies | AI Learning Path</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Poppins', sans-serif;
+            color: #1e293b;
+        }
+
+        /* ── NAVBAR (matching home page) ── */
+        .navbar {
+            background: #1e1e2f;
+            padding: 16px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d2ff;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cdd6f4;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #00d2ff;
+        }
+
+        /* ── HERO SECTION (matching home page gradient) ── */
+        .hero {
+            background: linear-gradient(160deg, #0f172a 0%, #0f4c81 50%, #00b4d8 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(0, 210, 255, 0.12) 0%, transparent 60%);
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.5; }
+            to   { transform: scale(1.1); opacity: 1; }
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* ── GRID ── */
+        .roles-section {
+            max-width: 1280px;
+            margin: 60px auto;
+            padding: 0 30px;
+        }
+
+        .section-label {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-label h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .section-label p {
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 28px;
+        }
+
+        /* ── CARD (matching home page feature cards) ── */
+        .role-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-top: 4px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d2ff, #6366f1);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .role-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .role-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #e0f2fe, #ddd6fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4f46e5;
+            flex-shrink: 0;
+        }
+
+        .role-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.3;
+        }
+
+        .role-desc {
+            font-size: 0.82rem;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            flex-grow: 1;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: auto;
+        }
+
+        .tech-badge {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .role-card:hover .tech-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+
+        .tech-badge.more {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .role-arrow {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6366f1;
+            opacity: 0;
+            transform: translateX(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover .role-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 20px; }
+            .nav-links { gap: 15px; }
+            .hero h1 { font-size: 2rem; }
+            .roles-section { padding: 0 15px; }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" style="padding: 5px 60px; height: auto;">
+    <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+        <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+        <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+    </a>
+    <div class="nav-links">
+        <a href="{% url 'home_view' %}">Home</a>
+        <a href="{% url 'dashboard_view' %}"><i class="fas fa-columns"></i> Dashboard</a>
+        <a href="{% url 'logout_view' %}" style="color: #f87171;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <h1><i class="fas fa-sitemap" style="margin-right:12px; opacity:0.85;"></i>25 Types of Developers</h1>
+    <p>Explore specialized tech careers, core technologies, and step-by-step roadmaps.</p>
+</section>
+
+<!-- CARDS GRID -->
+<div class="roles-section">
+    <div class="section-label">
+        <h2>Choose Your Career Path</h2>
+        <p>Click any role to see a detailed, phase-by-phase learning roadmap.</p>
+    </div>
+
+    <div class="roles-grid">
+        {% for role in roles %}
+        <a href="{% url 'detailed_roadmap' role.slug %}" class="role-card">
+            <div class="role-header">
+                <div class="role-icon">
+                    <i class="fas {{ role.icon }}"></i>
+                </div>
+                <h2 class="role-title">{{ role.name }}</h2>
+            </div>
+
+            <p class="role-desc">
+                Learn the roadmap and skills needed to become a {{ role.name }}.
+            </p>
+
+            <div class="tech-list">
+                {% for tech in role.tech|slice:":4" %}
+                <span class="tech-badge">{{ tech }}</span>
+                {% endfor %}
+                {% if role.tech|length > 4 %}
+                <span class="tech-badge more">+{{ role.tech|length|add:"-4" }} more</span>
+                {% endif %}
+            </div>
+
+            <div class="role-arrow">
+                View Roadmap <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 AI Learning Path &mdash; Career Paths & Technologies
+</footer>
+
+</body>
+</html>

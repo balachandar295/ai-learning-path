@@ -1,0 +1,241 @@
+language,level,question_text,option1,option2,option3,option4,correct_answer
+Python,Beginner,Who developed Python?,Guido van Rossum,Dennis Ritchie,Bjarne Stroustrup,James Gosling,Guido van Rossum
+Python,Beginner,Which extension is correct for Python files?,.py,.python,.pt,.pyt,.py
+Python,Beginner,Create variable with numeric value 5?,x = 5,x = int(5),Both correct,None,Both correct
+Python,Beginner,Which function is used for output?,print(),display(),echo(),output(),print()
+Python,Beginner,How do you start a comment?,#,//,/*,--,#
+Python,Beginner,Data type for 'True' or 'False'?,bool,int,str,float,bool
+Python,Beginner,What is the output of 3 * 3?,9,6,27,12,9
+Python,Beginner,Operator used for power (exponent)?,**,^,*,//,**
+Python,Beginner,How do you define a function?,def,function,func,define,def
+Python,Beginner,Which one is a List?,"[1, 2]","(1, 2)","{1, 2}","<1, 2>","[1, 2]"
+Python,Beginner,Is Python case sensitive?,Yes,No,Machine dependent,Only strings,Yes
+Python,Beginner,What is the result of 10 // 3?,3,3.33,1,0,3
+Python,Beginner,Which collection is unordered?,Set,List,Tuple,String,Set
+Python,Beginner,How to get input from user?,input(),get(),read(),scan(),input()
+Python,Beginner,What is 'None' in Python?,Null value,Zero,FALSE,Empty string,Null value
+Python,Beginner,Which loop is for fixed iterations?,for,while,do-while,repeat,for
+Python,Beginner,Length of a string 's'?,len(s),s.length(),length(s),s.size(),len(s)
+Python,Beginner,Keyword for 'if' else?,elif,else if,elseif,if else,elif
+Python,Beginner,What does 10 % 3 return?,1,3,0,10,1
+Python,Beginner,Can a tuple be changed?,No,Yes,Only first,Only last,No
+Python,Intermediate,Which method adds an item to the end of a list?,append(),add(),insert(),extend(),append()
+Python,Intermediate,What is List Comprehension?,Shorthand for loops,Dictionary tool,Error type,Math function,Shorthand for loops
+Python,Intermediate,What does *args do in a function?,Variable arguments,Keyword arguments,Error handling,List pointer,Variable arguments
+Python,Intermediate,Which block is used to handle exceptions?,except,catch,error,handle,except
+Python,Intermediate,What does 'self' represent in a class?,Current instance,Parent class,Static variable,Global variable,Current instance
+Python,Intermediate,Which method converts a string to lowercase?,lower(),down(),small(),Casefold(),lower()
+Python,Intermediate,What is a Lambda function?,Anonymous function,Recursive function,Library function,Class method,Anonymous function
+Python,Intermediate,Which module is used for Mathematical operations?,math,calculus,numbers,science,math
+Python,Intermediate,How do you remove an item from a list by its value?,remove(),pop(),delete(),discard(),remove()
+Python,Intermediate,What is 'Slicing' in Python?,Extracting part of list,Deleting a list,Merging lists,Sorting a list,Extracting part of list
+Python,Intermediate,Main difference between List and Tuple?,Mutability,Indexing,Storage,Speed,Mutability
+Python,Intermediate,What does the 'pass' keyword do?,Does nothing,Stops the loop,Skips a step,Returns a value,Does nothing
+Python,Intermediate,How to check if 'a' exists in list 'L'?,if 'a' in L,if L has 'a',"find('a', L)",L.contains('a'),if 'a' in L
+Python,Intermediate,Which built-in method is used to open a file?,open(),read(),load(),file(),open()
+Python,Intermediate,What is the purpose of __init__?,Constructor,Destructor,Regular Method,Variable,Constructor
+Python,Intermediate,What is a Dictionary in Python?,Key-Value pairs,List of numbers,String array,Boolean set,Key-Value pairs
+Python,Intermediate,Which function returns a sequence of numbers?,range(),series(),sequence(),list(),range()
+Python,Intermediate,How do you import a module named 'M'?,import M,include M,load M,using M,import M
+Python,Intermediate,What is a Global variable?,Accessible everywhere,Only in function,Only in class,Constant,Accessible everywhere
+Python,Intermediate,What does the 'break' statement do?,Exits the loop,Skips iteration,Stops program,Restarts loop,Exits the loop
+Python,Advanced,Decorator for static method?,@staticmethod,@static,@method,@classmethod,@staticmethod
+Python,Advanced,What is a 'Generator'?,Returns iterator,Deletes memory,Class type,Math tool,Returns iterator
+Python,Advanced,Keyword for generators?,yield,return,give,produce,yield
+Python,Advanced,What is 'Deep Copy'?,Full copy,Reference copy,Partial copy,Error,Full copy
+Python,Advanced,What is a 'Decorator'?,Modifies func,CSS tool,List sorter,Variable type,Modifies func
+Python,Advanced,Handling Multiple Inheritance?,MRO,super(),both,none,both
+Python,Advanced,What is 'Monkey Patching'?,Runtime change,Bug fixing,Security tool,Coding style,Runtime change
+Python,Advanced,What is __slots__ used for?,Memory optimize,Fast speed,Security,None,Memory optimize
+Python,Advanced,What is a 'Closure'?,Nested func,Loop type,Class type,File closer,Nested func
+Python,Advanced,Context Manager keyword?,with,using,open,manage,with
+Python,Advanced,Check instance of a class?,isinstance(),type(),check(),is(),isinstance()
+Python,Advanced,What is 'Pickling'?,Serialization,Slicing,Deleting,Sorting,Serialization
+Python,Advanced,Threading module name?,threading,threads,multi,async,threading
+Python,Advanced,What is GIL?,Global Interpreter Lock,Graphical Interface,Git Link,Logic Gate,Global Interpreter Lock
+Python,Advanced,Purpose of @property?,Getter/Setter,Private var,Static var,None,Getter/Setter
+Python,Advanced,Convert object to string?,__str__,__int__,__len__,__init__,__str__
+Python,Advanced,What is 'List flattening'?,Nested to 1D,1D to Nested,Sorting,Deleting,Nested to 1D
+Python,Advanced,Purpose of 'nonlocal'?,Outer scope var,Global var,Local var,Constant,Outer scope var
+Python,Advanced,What is 'Docstring'?,Documentation,String type,Error msg,Comment,Documentation
+Python,Advanced,Function to run async code?,asyncio.run(),run(),start(),execute(),asyncio.run()
+Java,Beginner,Who invented Java?,James Gosling,Dennis Ritchie,Bjarne Stroustrup,Guido van Rossum,James Gosling
+Java,Beginner,Which extension is for Java files?,.java,.class,.js,.jav,.java
+Java,Beginner,What is the entry point of Java?,main(),start(),init(),execute(),main()
+Java,Beginner,Which keyword creates a class?,class,def,create,struct,class
+Java,Beginner,Java is a ______ language.,Object-Oriented,Functional,Procedural,Scripting,Object-Oriented
+Java,Beginner,How to print in Java?,System.out.println,print(),Console.log,echo,System.out.println
+Java,Beginner,Which data type is for decimals?,double,int,boolean,char,double
+Java,Beginner,What is JVM?,Java Virtual Machine,Java Variable Map,Just Vision Mode,None,Java Virtual Machine
+Java,Beginner,Size of 'int' in Java?,4 bytes,2 bytes,8 bytes,1 byte,4 bytes
+Java,Beginner,Default value of boolean?,FALSE,TRUE,0,null,FALSE
+Java,Beginner,Keyword to inherit a class?,extends,implements,inherits,using,extends
+Java,Beginner,Which is not a primitive type?,String,int,char,float,String
+Java,Beginner,Operator for 'Not Equal'?,!=,<>,#ERROR!,not,!=
+Java,Beginner,How to create an object of class 'A'?,A obj = new A();,A obj = A();,new obj A;,obj = A();,A obj = new A();
+Java,Beginner,Which loop is guaranteed to run once?,do-while,while,for,foreach,do-while
+Java,Beginner,Keyword to define a constant?,final,const,static,fixed,final
+Java,Beginner,Package for Scanner class?,java.util,java.io,java.lang,java.net,java.util
+Java,Beginner,Which method returns string length?,length(),size(),getLength(),len(),length()
+Java,Beginner,Is Java platform independent?,Yes,No,Partial,OS dependent,Yes
+Java,Beginner,Comment style for single line?,//,#,/*,--,//
+Java,Intermediate,What is 'Method Overloading'?,Same name diff params,Diff name same params,Multiple return types,Error,Same name diff params
+Java,Intermediate,Keyword for parent class methods?,super,this,parent,base,super
+Java,Intermediate,Which block is always executed?,finally,catch,try,handle,finally
+Java,Intermediate,What is an 'Interface'?,Abstract blueprint,Class type,Variable,Method,Abstract blueprint
+Java,Intermediate,Keyword to use an interface?,implements,extends,uses,includes,implements
+Java,Intermediate,What is 'Polymorphism'?,Many forms,Data hiding,Code reuse,Error handling,Many forms
+Java,Intermediate,Access modifier for same package?,default,private,public,protected,default
+Java,Intermediate,Static variables belong to?,Class,Object,Method,Package,Class
+Java,Intermediate,What is 'Encapsulation'?,Data hiding,Data sharing,Code splitting,Debugging,Data hiding
+Java,Intermediate,Purpose of 'abstract' keyword?,Force inheritance,Prevent change,Speed up,None,Force inheritance
+Java,Intermediate,Which class is the root of all classes?,Object,System,Main,Root,Object
+Java,Intermediate,What is 'Checked Exception'?,Compile-time error,Runtime error,Logical error,None,Compile-time error
+Java,Intermediate,Keyword to throw an exception?,throw,throws,catch,try,throw
+Java,Intermediate,Can a constructor be private?,Yes,No,Only in main,Only in interface,Yes
+Java,Intermediate,What is 'Garbage Collection'?,Freeing memory,Deleting files,Closing DB,Error fix,Freeing memory
+Java,Intermediate,How to prevent inheritance?,final class,static class,abstract class,private class,final class
+Java,Intermediate,Which collection allows key-value?,HashMap,ArrayList,HashSet,LinkedList,HashMap
+Java,Intermediate,Is 'String' mutable in Java?,No,Yes,Only in loops,Only if static,No
+Java,Intermediate,Purpose of 'wrapper' classes?,Primitives to Object,File handling,UI design,Networking,Primitives to Object
+Java,Intermediate,What is 'Upcasting'?,Child to Parent,Parent to Child,Int to String,String to Int,Child to Parent
+Java,Advanced,What is 'Reflection' in Java?,Inspect classes at runtime,Delete classes,Speed up code,Memory management,Inspect classes at runtime
+Java,Advanced,Which API is used for Database?,JDBC,JSON,XML,HTTP,JDBC
+Java,Advanced,What is a 'Servlet'?,Server-side Java program,Client-side app,Database tool,Browser plugin,Server-side Java program
+Java,Advanced,Purpose of 'Annotations'?,Metadata for code,Error handling,Loop control,Math functions,Metadata for code
+Java,Advanced,What is 'Multithreading'?,Running tasks parallel,Single tasking,Memory sorting,File copying,Running tasks parallel
+Java,Advanced,Which method starts a thread?,start(),run(),execute(),begin(),start()
+Java,Advanced,What is 'Synchronization'?,Prevents thread interference,Speeds up threads,Deletes threads,None,Prevents thread interference
+Java,Advanced,What is 'Stream API'?,Processing collections,Input/Output,GUI design,Networking,Processing collections
+Java,Advanced,Functional Interface keyword?,@FunctionalInterface,@Interface,@Lambda,@Function,@FunctionalInterface
+Java,Advanced,What is a 'Lambda Expression'?,Short block of code,Loop type,Class type,Variable type,Short block of code
+Java,Advanced,Purpose of 'Optional' class?,Avoid NullPointerException,String handling,Math tool,File reading,Avoid NullPointerException
+Java,Advanced,What is 'Generics' in Java?,Type safety,Code speed,Security,Network tool,Type safety
+Java,Advanced,Method to pause a thread?,sleep(),stop(),break(),wait(),sleep()
+Java,Advanced,What is 'Deadlock'?,Threads waiting forever,Program crash,Database error,Fast execution,Threads waiting forever
+Java,Advanced,Which interface for Lambda?,Functional Interface,Marker Interface,Serializable,Cloneable,Functional Interface
+Java,Advanced,What is 'JSP'?,Java Server Pages,Java Standard Path,Just Simple Program,None,Java Server Pages
+Java,Advanced,Default scope of a Spring bean?,Singleton,Prototype,Session,Global,Singleton
+Java,Advanced,What is 'Hibernate'?,ORM tool,GUI tool,Web server,Compiler,ORM tool
+Java,Advanced,Purpose of 'volatile' keyword?,Thread visibility,Speed up,Constant value,Error handling,Thread visibility
+Java,Advanced,What is 'Maven'?,Build tool,Code editor,OS,Web browser,Build tool
+C,Beginner,Who developed C?,Dennis Ritchie,Ken Thompson,Bjarne Stroustrup,James Gosling,Dennis Ritchie
+C,Beginner,Which extension is for C files?,.c,.cpp,.h,.obj,.c
+C,Beginner,How to print in C?,printf(),scanf(),print(),echo,printf()
+C,Beginner,Which keyword is for integer?,int,float,char,double,int
+C,Beginner,Every C statement ends with?,;,:,.,",",;
+C,Beginner,C is a ______ language.,Procedural,Object-Oriented,Scripting,Functional,Procedural
+C,Beginner,How to take input?,scanf(),printf(),get(),input(),scanf()
+C,Beginner,Size of 'char' in C?,1 byte,2 bytes,4 bytes,8 bytes,1 byte
+C,Beginner,Which loop is entry controlled?,while,do-while,repeat,none,while
+C,Beginner,Start of C program?,main(),start(),begin(),void(),main()
+C,Beginner,Symbol for Preprocessor?,#,$,&,@,#
+C,Beginner,What is '\n'?,New line,Tab,Null,Space,New line
+C,Beginner,Is C case sensitive?,Yes,No,Machine dependent,Partial,Yes
+C,Beginner,Format specifier for int?,%d,%f,%c,%s,%d
+C,Beginner,Which is a valid variable?,int a;,int 1a;,int a b;,int -a;,int a;
+C,Beginner,Logic 'AND' operator?,&&,||,!,&,&&
+C,Beginner,Header file for printf?,stdio.h,conio.h,math.h,string.h,stdio.h
+C,Beginner,Keyword to exit loop?,break,exit,stop,return,break
+C,Beginner,What is 'float' used for?,Decimals,Integers,Text,Boolean,Decimals
+C,Beginner,Result of 5 / 2 in int?,2,2.5,3,0,2
+C,Intermediate,What is 'String' in C?,Array of chars,Single char,Integer type,Float type,Array of chars
+C,Intermediate,Function to find string length?,strlen(),strsize(),len(),length(),strlen()
+C,Intermediate,Which is used for 'or' logic?,||,&&,!,^,||
+C,Intermediate,Global variables are stored in?,Data segment,Stack,Heap,Code segment,Data segment
+C,Intermediate,Return type of 'malloc'?,void pointer,int pointer,char pointer,NULL,void pointer
+C,Intermediate,Header for math functions?,math.h,stdio.h,conio.h,string.h,math.h
+C,Intermediate,Keyword to skip one iteration?,continue,break,goto,return,continue
+C,Intermediate,Array name itself is a?,Pointer,Constant,Variable,Function,Pointer
+C,Intermediate,Maximum value of 'char'?,127,255,32767,65535,127
+C,Intermediate,What is 'static' variable?,Retains value,Changes value,Deletes value,Global only,Retains value
+C,Intermediate,How to copy a string?,strcpy(),strcat(),strcmp(),strcopy(),strcpy()
+C,Intermediate,Function to compare strings?,strcmp(),strcm(),compare(),strncmp(),strcmp()
+C,Intermediate,Storage class for local vars?,auto,static,extern,register,auto
+C,Intermediate,What is an 'Enumeration'?,enum,struct,union,typedef,enum
+C,Intermediate,Which operator is used for XOR?,^,&,|,~,^
+C,Intermediate,Size of a pointer in 64-bit?,8 bytes,4 bytes,2 bytes,1 byte,8 bytes
+C,Intermediate,Default value of static var?,0,Garbage,1,NULL,0
+C,Intermediate,Purpose of 'const' keyword?,Read-only var,Speed up,Error check,None,Read-only var
+C,Intermediate,What is 'Typecasting'?,Convert data type,Delete data,Copy data,Sort data,Convert data type
+C,Intermediate,Operator for right shift?,>>,<<,>,<,>>
+C,Advanced,Dynamic memory allocation?,malloc(),alloc(),new,create(),malloc()
+C,Advanced,Function to free memory?,free(),delete(),remove(),clear(),free()
+C,Advanced,What is a 'File Pointer'?,FILE *fp,int *fp,char *fp,void *fp,FILE *fp
+C,Advanced,Function to close file?,fclose(),close(),exit(),finish(),fclose()
+C,Advanced,What is a 'Macro'?,#define,#include,#ifdef,#pragma,#define
+C,Advanced,Void' pointer can point to?,Any type,Only int,Only char,Nothing,Any type
+C,Advanced,Storage class for global?,extern,auto,register,static,extern
+C,Advanced,What is 'Dangling Pointer'?,Points to deleted,Points to NULL,Points to 0,None,Points to deleted
+C,Advanced,Use of 'typedef'?,Alias for type,Math tool,Loop control,None,Alias for type
+C,Advanced,Calloc' initializes memory to?,Zero,Garbage,One,NULL,Zero
+C,Advanced,Function to resize memory?,realloc(),malloc(),calloc(),free(),realloc()
+C,Advanced,Preprocessor for 'if' condition?,#ifdef,#if,#else,#elif,#ifdef
+C,Advanced,File opening mode for 'append'?,a,w,r,r+,a
+C,Advanced,Function to write char to file?,fputc(),fgetc(),fprintf(),fscanf(),fputc()
+C,Advanced,Command line arguments?,"argc, argv","main, start","args, params",None,"argc, argv"
+C,Advanced,Pointer to a pointer syntax?,**p,*p,&p,&&p,**p
+C,Advanced,Function to get file position?,ftell(),fseek(),rewind(),fpos(),ftell()
+C,Advanced,What is 'Memory Leak'?,Unfreed memory,Fast memory,Deleted file,None,Unfreed memory
+C,Advanced,Purpose of 'volatile' in C?,Prevent optimization,Speed up,Constant,Error handle,Prevent optimization
+C,Advanced,Bitwise NOT operator?,~,!,^,&,~
+C++,Beginner,Who developed C++?,Bjarne Stroustrup,Dennis Ritchie,James Gosling,Ken Thompson,Bjarne Stroustrup
+C++,Beginner,Extension for C++ files?,.cpp,.c,.java,.py,.cpp
+C++,Beginner,How to print in C++?,cout,cin,printf,print,cout
+C++,Beginner,Which header is for I/O?,iostream,stdio.h,conio.h,math.h,iostream
+C++,Beginner,Operator for input?,>>,<<,<,>,>>
+C++,Beginner,C++ is an extension of?,C language,Java,Python,C#,C language
+C++,Beginner,Standard namespace in C++?,std,main,iostream,namespace,std
+C++,Beginner,Keyword for boolean?,bool,boolean,TRUE,FALSE,bool
+C++,Beginner,What is 'endl'?,New line,End program,End loop,Error,New line
+C++,Beginner,How to create an object?,ClassName obj;,obj ClassName;,new obj;,create obj;,ClassName obj;
+C++,Beginner,Access modifier by default?,private,public,protected,internal,private
+C++,Beginner,Constructor name is same as?,Class name,Method name,Variable name,None,Class name
+C++,Beginner,Destructor starts with?,~,!,@,#,~
+C++,Beginner,Keyword for inheritance?,: (colon),extends,implements,using,: (colon)
+C++,Beginner,Operator for output?,<<,>>,<,>,<<
+C++,Beginner,Which is used for comments?,//,#,--,%%,//
+C++,Beginner,Can C++ run C code?,Yes,No,Partial,Machine dependent,Yes
+C++,Beginner,What is a 'Class'?,Blueprint/Template,Variable,Function,Loop,Blueprint/Template
+C++,Beginner,Keyword to create a class?,class,struct,define,object,class
+C++,Beginner,Size of 'double' in C++?,8 bytes,4 bytes,2 bytes,1 byte,8 bytes
+C++,Intermediate,What is 'Function Overloading'?,Same name diff params,Diff name same params,Error,None,Same name diff params
+C++,Intermediate,Keyword for parent class?,base,super,parent,None,None
+C++,Intermediate,What is 'this' pointer?,Current object,Parent object,Static object,Global object,Current object
+C++,Intermediate,What is 'Encapsulation'?,Data hiding,Data sharing,Code splitting,Debugging,Data hiding
+C++,Intermediate,Virtual' function purpose?,Runtime Polymorphism,Compile time,Fast speed,Memory save,Runtime Polymorphism
+C++,Intermediate,Keyword for constant?,const,final,static,fixed,const
+C++,Intermediate,What is 'Abstraction'?,Hiding details,Hiding data,Showing all,None,Hiding details
+C++,Intermediate,Purpose of 'friend' function?,Access private data,Speed up,Error check,None,Access private data
+C++,Intermediate,Multiple inheritance allowed?,Yes,No,Only for classes,Only for int,Yes
+C++,Intermediate,What is 'Inline' function?,Replaces call with code,Recursive func,Static func,None,Replaces call with code
+C++,Intermediate,Operator for dynamic memory?,new,malloc,create,alloc,new
+C++,Intermediate,Operator to delete memory?,delete,free,remove,clear,delete
+C++,Intermediate,What is 'Operator Overloading'?,Redefining operators,Deleting operators,Sorting data,None,Redefining operators
+C++,Intermediate,Purpose of 'protected'?,Accessible in child,Private only,Public everywhere,None,Accessible in child
+C++,Intermediate,What is a 'Template'?,Generic programming,String type,Loop type,Error type,Generic programming
+C++,Intermediate,Which block handles errors?,catch,try,throw,except,catch
+C++,Intermediate,Keyword to signal error?,throw,catch,error,try,throw
+C++,Intermediate,Static members belong to?,Class,Object,Function,Package,Class
+C++,Intermediate,What is a 'Namespace'?,Groups related code,File name,Loop type,Variable,Groups related code
+C++,Intermediate,Pure Virtual function ends with?,0,;,{ },: 0,0
+C++,Advanced,What is 'STL'?,Standard Template Lib,Static Tool Link,String Type List,None,Standard Template Lib
+C++,Advanced,Vector is a part of?,STL,Math.h,String.h,Iostream,STL
+C++,Advanced,What is 'RAII'?,Resource Acquisition,Resource Analysis,Runtime Access,None,Resource Acquisition
+C++,Advanced,Purpose of 'smart pointers'?,Automatic memory mgmt,Fast speed,Security,None,Automatic memory mgmt
+C++,Advanced,What is 'Lambda' in C++11?,Anonymous function,Variable type,Class type,Math tool,Anonymous function
+C++,Advanced,Keyword for type inference?,auto,var,decltype,let,auto
+C++,Advanced,What is 'Move Semantics'?,Efficient data transfer,Data copy,Data delete,None,Efficient data transfer
+C++,Advanced,Purpose of 'explicit'?,Prevent conversion,Allow conversion,Fast speed,None,Prevent conversion
+C++,Advanced,What is 'RTTI'?,Runtime Type Info,Resource Tool,Runtime Tool,None,Runtime Type Info
+C++,Advanced,Dynamic_cast used for?,Polymorphic types,Int to Float,String to Int,None,Polymorphic types
+C++,Advanced,What is 'Mangled Name'?,Internal compiler name,Variable name,Function name,Error name,Internal compiler name
+C++,Advanced,Purpose of 'mutable'?,Modify in const func,Deleting data,Speed up,None,Modify in const func
+C++,Advanced,What is 'Diamond Problem'?,Multiple inheritance,Memory leak,Slow code,Syntax error,Multiple inheritance
+C++,Advanced,Keyword for move constructor?,&&,&,*,**,&&
+C++,Advanced,What is 'Perfect Forwarding'?,Preserving value types,Copying data,Deleting data,None,Preserving value types
+C++,Advanced,Purpose of 'override'?,Check virtual func,Stop inheritance,Fast speed,None,Check virtual func
+C++,Advanced,Purpose of 'final' in C++11?,Stop inheritance,Start inheritance,Constant,None,Stop inheritance
+C++,Advanced,What is 'constexpr'?,Compile-time constant,Runtime variable,Loop type,None,Compile-time constant
+C++,Advanced,Unique_ptr belongs to?,Memory header,Iostream,Vector,Math,Memory header
+C++,Advanced,What is 'Copy Elision'?,Optimization,Error,Deletion,Sorting,Optimization

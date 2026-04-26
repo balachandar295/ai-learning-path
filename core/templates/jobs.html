@@ -1,0 +1,419 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs and Intern Update | AI Learning Path</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-body: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --nav-dark: #1a1f36;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 75px; 
+            min-height: 100vh;
+        }
+
+        /* Navbar matched to Problem Solver page */
+        .navbar {
+            background-color: var(--nav-dark);
+            height: 75px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-center { display: flex; gap: 15px; align-items: center; }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        /* Glassmorphism Form Card */
+        .post-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255,255,255,0.4);
+            position: sticky;
+            top: 100px;
+        }
+
+        .post-card h3 {
+            margin-top: 0;
+            color: var(--nav-dark);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            background: #f8fafc;
+            color: #334155;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        /* Jobs Feed */
+        .jobs-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .job-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: rgba(0,210,255,0.3);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--nav-dark);
+            margin: 0 0 5px 0;
+        }
+
+        .job-company {
+            font-size: 0.95rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .job-badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge.internship { background: #fef3c7; color: #b45309; }
+        .badge.fulltime { background: #dcfce7; color: #166534; }
+
+        .job-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        .apply-btn {
+            align-self: flex-start;
+            background: var(--nav-dark);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .apply-btn:hover {
+            background: var(--primary);
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .post-card {
+                position: static;
+            }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar" style="padding: 5px 40px; height: auto;">
+        <a href="/home/" class="nav-logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <div class="nav-center">
+            <a href="/home/" style="color: #fff; text-decoration: none; margin-right: 20px; font-weight: 600;">Home</a>
+            <a href="/dashboard/" style="color: #e2e8f0; text-decoration: none; font-weight: 500;">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        
+        <!-- Left Column: Add Job Form -->
+        <aside>
+            <div class="post-card">
+                <h3><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Post an Opportunity</h3>
+                <form id="jobForm">
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text" id="jobTitle" placeholder="e.g. AI Prompt Engineer" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company/Institution</label>
+                        <input type="text" id="jobCompany" placeholder="e.g. Google DeepMind" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Opportunity Type</label>
+                        <select id="jobType">
+                            <option value="Full-Time">Full-Time</option>
+                            <option value="Internship">Internship</option>
+                            <option value="Part-Time">Part-Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="jobDesc" rows="4" placeholder="Briefly describe the requirements and role..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Apply Link</label>
+                        <input type="url" id="jobLink" placeholder="https://..." required>
+                    </div>
+                    <button type="submit" class="submit-btn">Publish to Board</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Right Column: Jobs Feed -->
+        <main>
+            <div class="jobs-feed" id="jobsFeed">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('jobForm');
+            const feed = document.getElementById('jobsFeed');
+
+            let storedJobs = JSON.parse(localStorage.getItem('ai_jobs_board') || '[]');
+
+            function createJobCard(job) {
+                let typeClass = 'fulltime';
+                if (job.type && job.type.toLowerCase().includes('intern')) typeClass = 'internship';
+
+                const tagsHtml = job.tags ? job.tags.map(t => `<span style="color:#64748b; font-size:0.75rem; margin-right:5px;">• ${t}</span>`).join('') : '';
+                
+                return `
+                    <div class="job-card" style="margin-bottom:20px; padding:20px; border-radius:12px; border:1px solid #e2e8f0; background:#fff;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h3 style="margin:0 0 5px; font-size:1.1rem; color:#1a1f36; font-weight:600;">${job.title}</h3>
+                                <p style="margin:0 0 10px; font-size:0.9rem; color:#475569; font-weight:500;">
+                                    ${job.company} 
+                                </p>
+                            </div>
+                            <span class="badge ${typeClass}">${job.type}</span>
+                        </div>
+                        
+                        <div style="display:flex; gap:15px; color:#64748b; font-size:0.85rem; margin-bottom:10px; flex-wrap:wrap;">
+                            <span><i class="fas fa-rupee-sign" style="color:#94a3b8; margin-right:4px;"></i> ${job.salary || 'Competitive'}</span>
+                            <span><i class="fas fa-map-marker-alt" style="color:#ef4444; margin-right:4px;"></i> ${job.location || 'Remote'}</span>
+                        </div>
+                        
+                        <p style="margin:0 0 10px; font-size:0.85rem; color:#475569; line-height:1.5;">
+                            <i class="far fa-file-alt" style="color:#94a3b8; margin-right:4px;"></i> ${job.desc}
+                        </p>
+                        
+                        <div style="display:flex; flex-wrap:wrap; margin-bottom:15px; gap:5px;">
+                            ${tagsHtml}
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#94a3b8; font-size:0.75rem;">${job.date}</span>
+                            <a href="/job-apply/?title=${encodeURIComponent(job.title)}&company=${encodeURIComponent(job.company)}" class="apply-btn" style="padding:6px 16px;">Apply Now <i class="fas fa-arrow-right" style="margin-left:5px;"></i></a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async function loadJobs() {
+                feed.innerHTML = '<p style="padding:20px; color:#64748b; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Automatically updating latest tech opportunities...</p>';
+                let apiJobs = [];
+                try {
+                    const res = await fetch('/api/jobs/');
+                    if(res.ok) {
+                        const data = await res.json();
+                        apiJobs = data.jobs || [];
+                    }
+                } catch(e) {
+                    console.error('Error fetching API jobs', e);
+                }
+                
+                const allJobs = [...apiJobs];
+                feed.innerHTML = '';
+                
+                if(allJobs.length === 0) {
+                    feed.innerHTML = '<p>No jobs available right now.</p>';
+                    return;
+                }
+                
+                allJobs.reverse().forEach(job => {
+                    feed.insertAdjacentHTML('beforeend', createJobCard(job));
+                });
+            }
+
+            loadJobs();
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newJob = {
+                    title: document.getElementById('jobTitle').value,
+                    company: document.getElementById('jobCompany').value,
+                    type: document.getElementById('jobType').value,
+                    desc: document.getElementById('jobDesc').value,
+                    link: document.getElementById('jobLink').value,
+                    date: new Date().toLocaleDateString()
+                };
+                storedJobs.push(newJob);
+                localStorage.setItem('ai_jobs_board', JSON.stringify(storedJobs));
+                
+                loadJobs();
+                form.reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -2,295 +2,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <meta charset="UTF-8">
-    <title>AI Skill Assessment</title>
-    <link rel="stylesheet" href="{% static 'basic.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Skill Assessment | Official Portal</title>
     <style>
-        .test-wrapper { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
-        .header { display: flex; justify-content: space-between; position: sticky; top: 0; background: white; padding: 10px; border-bottom: 2px solid #eee; z-index: 100; }
-        .timer { color: #e74c3c; font-weight: bold; font-size: 1.2rem; }
-        .question-block { margin: 25px 0; padding: 15px; border: 1px solid #f0f0f0; border-radius: 8px; animation: fadeIn 0.5s ease; }
-        .options-list { list-style: none; padding: 0; }
-        .instructions { background: #fffbe6; border: 1px solid #ffe58f; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        #quiz-section { display: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .nav-box { width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:pointer; font-weight:bold; transition: 0.3s; border: 2px solid #ddd; }
-    
-    /* Navigation Grid Styling */
-.nav-box {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%; /* Circle shape */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* Neenga kudutha same CSS (No changes) */
+        :root { --primary-blue: #003366; --accent-blue: #007bff; --success-green: #28a745; --warning-yellow: #ffcc00; --danger-red: #d9534f; --light-bg: #eef2f7; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; margin: 0; padding: 20px; color: #333; }
+        #timerBadge { display: none; background: white; padding: 12px 25px; border-radius: 50px; font-weight: bold; color: var(--danger-red); box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #eee; }
+        .nav-container { background: var(--primary-blue); padding: 15px; border-radius: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .nav-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; border: 2px solid rgba(255,255,255,0.1); font-size: 14px; }
+        .nav-circle.active { border: 3px solid var(--warning-yellow); transform: scale(1.1); box-shadow: 0 0 12px var(--warning-yellow); }
+        .nav-circle.answered { background-color: var(--success-green); }
+        .nav-circle.unanswered { background-color: #1a4b8c; }
+        #instruction-section { background: rgba(255, 255, 255, 0.95); border-top: 8px solid var(--primary-blue); padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); max-width: 750px; margin: 20px auto; }
+        .instruction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .ins-item { padding: 15px; border-radius: 12px; border-left: 5px solid var(--accent-blue); background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
+        .quiz-card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 800px; margin: 0 auto; }
+        .option-label { display: flex; align-items: center; padding: 15px; margin: 12px 0; border: 1px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background-color: #f0f7ff; border-color: var(--accent-blue); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 4, 20, 0.85); display: none; align-items: center; justify-content: center; z-index: 10000; }
+        .result-card { background: white; padding: 45px; border-radius: 30px; text-align: center; max-width: 480px; width: 92%; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .score-circle { width: 140px; height: 140px; border: 10px solid #f0f0f0; border-top: 10px solid var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 25px auto; font-size: 2.2rem; font-weight: bold; color: #333; }
+        .btn { padding: 15px 30px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; }
+        .btn-primary { background: var(--accent-blue); color: white; width: 100%; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .assessment-container {
+    width: 90%; /* Standard width for laptop */
+    max-width: 800px;
+    margin: auto;
 }
 
-.nav-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-}
-
-/* Question Block Animation */
-.question-block {
-    background: #ffffff;
-    border: 1px solid #eef2f5 !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    padding: 30px !important;
-    border-radius: 15px !important;
-    margin-top: 20px;
-    animation: slideIn 0.4s ease-out;
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-/* Options Styling */
-.options-list li {
-    list-style: none;
-    border: 2px solid #f0f4f8 !important;
-    transition: all 0.2s ease;
-}
-
-.options-list li:hover {
-    border-color: #00d4ff !important;
-    background-color: #f0fbff !important;
-}
-
-/* When radio is checked, highlight the whole row */
-.options-list li:has(input:checked) {
-    background-color: #e6faff !important;
-    border-color: #00d4ff !important;
-}
-
-/* Timer Styling */
-.timer {
-    background: #fff5f5;
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: 1px solid #feb2b2;
-}
-
-/* Submit & Nav Buttons */
-.auth-btn {
-    padding: 12px 25px;
-    border-radius: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
-}
-
-.auth-btn:active {
-    transform: scale(0.95);
-}</style>
-</head>
-<body class="bg-alt">
-
-<div class="test-wrapper">
-    <div id="instruction-section">
-        <h2>Assessment Instructions</h2>
-        <div class="instructions">
-            <ul>
-                <li><strong>Total Questions:</strong> 20</li>
-                <li><strong>Time Limit:</strong> 25 Minutes</li>
-                <li><strong>Topics:</strong> Aptitude, Logical, Coding (DS/OOPs)</li>
-                <li><strong>Strict Mode:</strong> Do NOT switch tabs. Test will auto-submit.</li>
-            </ul>
-        </div>
-        <button onclick="startTest()" class="auth-btn">I am Ready - Start Test</button>
-    </div>
-
-    <div id="quiz-section">
-        <div class="header">
-            <h3 id="levelDisplay">Level: </h3>
-            <div class="timer">Time Left: <span id="time">25:00</span></div>
-        </div>
-        <form id="quizForm">
-            <div id="questionsContainer"></div>
-            </form>
-    </div>
-</div>
-<script>
-// 1. Global Variables (Orae oru dharava dhaan define pannanum)
-let timer = null;
-let timeLeft = 25 * 60; 
-let testStarted = false;
-let currentQuestionIndex = 0;
-let userAnswers = {}; 
-
-// All Questions Object (Beginner, Intermediate, Advanced)
-const allQuestions = {
-    'Beginner': [
-        { q: "Aptitude: A person buys a pen for ₹10 and sells it for ₹15. Profit %?", options: ["25%", "50%", "75%", "100%"], ans: 1 },
-        { q: "Aptitude: A train covers 120 km in 2 hours. Speed?", options: ["40 km/hr", "60 km/hr", "80 km/hr", "100 km/hr"], ans: 1 },
-        { q: "Aptitude: Average of 10, 20, and 30?", options: ["15", "20", "25", "30"], ans: 1 },
-        { q: "Aptitude: 20% of 150 is?", options: ["20", "30", "40", "50"], ans: 1 },
-        { q: "Logical: Series: 5, 10, 15, 20, ?", options: ["22", "25", "30", "28"], ans: 1 },
-        { q: "Logical: APPLE -> BQQMF, BOY -> ?", options: ["CPZ", "AQX", "CNX", "DQZ"], ans: 0 },
-        { q: "Logical: Odd one out?", options: ["Leopard", "Cougar", "Elephant", "Lion"], ans: 2 },
-        { q: "Logical: Son of my grandfather's only child?", options: ["Brother", "Father", "Uncle", "Cousin"], ans: 0 },
-        { q: "Coding: User input in Python?", options: ["get()", "input()", "read()", "scan()"], ans: 1 },
-        { q: "Coding: 3 + 2 * 2 = ?", options: ["10", "7", "8", "6"], ans: 1 },
-        { q: "Coding: Assignment symbol?", options: ["==", "=", ":=", "->"], ans: 1 },
-        { q: "Coding: Python extension?", options: [".py", ".python", ".pt", ".p"], ans: 0 },
-        { q: "OOPs: Car is Class, Maruti is?", options: ["Function", "Object", "Variable", "Data Type"], ans: 1 },
-        { q: "OOPs: Child uses father's properties?", options: ["Abstraction", "Inheritance", "Polymorphism", "Encapsulation"], ans: 1 },
-        { q: "OOPs: Hiding internal details?", options: ["Abstraction", "Inheritance", "Overloading", "Array"], ans: 0 },
-        { q: "OOPs: One name, many forms?", options: ["Polymorphism", "Inheritance", "Variable", "List"], ans: 0 },
-        { q: "DSA: LIFO principle?", options: ["Queue", "Stack", "Array", "Linked List"], ans: 1 },
-        { q: "DSA: FIFO principle?", options: ["Stack", "Queue", "Tree", "Graph"], ans: 1 },
-        { q: "DSA: Best search for Sorted list?", options: ["Linear Search", "Binary Search", "Random Search", "None"], ans: 1 },
-        { q: "DSA: Tree-like data structure?", options: ["Stack", "Array", "Tree", "Queue"], ans: 2 }
-    ],
-    'Intermediate': [
-        { q: "Aptitude: Sum amounts to ₹815 in 3yrs, ₹854 in 4yrs. Sum?", options: ["650", "690", "698", "700"], ans: 2 },
-        { q: "Aptitude: 15 men in 35 days, 21 men in?", options: ["25 days", "20 days", "15 days", "22 days"], ans: 0 },
-        { q: "Aptitude: A:B = 4:3. In 6yrs A=26. B present age?", options: ["12", "15", "18", "21"], ans: 1 },
-        { q: "Aptitude: Pipe fills 10hr, empties 15hr. Together?", options: ["20 hrs", "25 hrs", "30 hrs", "35 hrs"], ans: 2 },
-        { q: "Logical: MACHINE -> 19-7-9-14-15-20-11. DANGER -> ?", options: ["10-7-20-13-11-24", "11-7-20-16-11-24", "13-7-20-9-11-25", "10-7-20-10-11-25"], ans: 0 },
-        { q: "Logical: Missing number: 1, 4, 9, 16, 25, ?", options: ["30", "35", "36", "40"], ans: 2 },
-        { q: "Logical: Which is a leap year?", options: ["1900", "2000", "2100", "2200"], ans: 1 },
-        { q: "Logical: A is mother of B, B sister of C, C father of D. A to D?", options: ["Mother", "Grandmother", "Aunt", "Sister"], ans: 1 },
-        { q: "Coding: type([]) output in Python?", options: ["tuple", "list", "set", "dict"], ans: 1 },
-        { q: "Coding: Mutable data type?", options: ["String", "Tuple", "List", "Integer"], ans: 2 },
-        { q: "Coding: Python constructor?", options: ["def start()", "def __init__()", "def constructor()", "def main()"], ans: 1 },
-        { q: "Coding: 'break' function?", options: ["Skips iteration", "Exits loop", "Starts again", "Slows down"], ans: 1 },
-        { q: "OOPs: Method behaves differently based on object?", options: ["Abstraction", "Encapsulation", "Polymorphism", "Inheritance"], ans: 2 },
-        { q: "OOPs: Private member accessibility?", options: ["Global", "Only within class", "Child classes", "None"], ans: 1 },
-        { q: "OOPs: Same name, different parameters?", options: ["Overriding", "Overloading", "Inheritance", "Abstraction"], ans: 1 },
-        { q: "OOPs: Class that cannot be instantiated?", options: ["Concrete", "Abstract", "Final", "Static"], ans: 1 },
-        { q: "DSA: Time complexity of Linear Search?", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], ans: 2 },
-        { q: "DSA: DS for Recursion?", options: ["Queue", "Stack", "Linked List", "Tree"], ans: 1 },
-        { q: "DSA: Singly Linked List node contents?", options: ["Prev pointer", "Next pointer", "Head", "Tail"], ans: 1 },
-        { q: "DSA: Worst-case O(n^2) sorting?", options: ["Merge Sort", "Quick Sort", "Bubble Sort", "Heap Sort"], ans: 2 }
-    ],
-    'Advanced': [
-        { q: "Aptitude: Tank filled in 18 mins with pipe 1 stopped. First pipe stop time?", options: ["6 min", "8 min", "10 min", "12 min"], ans: 1 },
-        { q: "Aptitude: 2 red, 3 green, 2 blue balls. Probability none is blue?", options: ["10/21", "11/21", "2/7", "5/7"], ans: 0 },
-        { q: "Aptitude: Sum amounts 6655 (3yr) & 7320.5 (4yr) compound. Rate?", options: ["5%", "10%", "12%", "15%"], ans: 1 },
-        { q: "Aptitude: Man 15km/hr still water, river 3km/hr. Distance place & back?", options: ["7.2 km", "8.5 km", "9 km", "6.8 km"], ans: 0 },
-        { q: "Logical: 1st Jan 2004 (Thu). 1st Jan 2005?", options: ["Friday", "Saturday", "Sunday", "Monday"], ans: 1 },
-        { q: "Logical: Poets/Painters/Day-dreamers logic?", options: ["Only I follows", "Only II follows", "Both follow", "Neither follows"], ans: 3 },
-        { q: "Logical: Series: 10, 14, 26, 42, 70, ?", options: ["100", "102", "114", "120"], ans: 2 },
-        { q: "Logical: Circle seating A-F. Who is between A and F?", options: ["E", "D", "C", "B"], ans: 1 },
-        { q: "Coding: What is a Generator in Python?", options: ["Returns list", "Yields iterator", "Creates classes", "Memory manager"], ans: 1 },
-        { q: "Coding: Python memory management?", options: ["Manually", "Ref counting & GC", "Stack only", "None"], ans: 1 },
-        { q: "Coding: *args and **kwargs purpose?", options: ["Fixed args", "Variable args", "Speed", "Imports"], ans: 1 },
-        { q: "Coding: [i for i in range(5) if i%2==0]?", options: ["[0, 2, 4]", "[1, 3]", "[0-4]", "Error"], ans: 0 },
-        { q: "OOPs: Python Multiple Inheritance support?", options: ["No", "Yes", "Interfaces only", "None"], ans: 1 },
-        { q: "OOPs: @staticmethod vs @classmethod?", options: ["No diff", "Classmethod takes cls", "Static takes self", "None"], ans: 1 },
-        { q: "OOPs: Principle violated if class modified instead of extended?", options: ["Dry", "Open-Closed", "Single Resp", "Liskov"], ans: 1 },
-        { q: "OOPs: Decorator use?", options: ["UI Design", "Modify behavior", "Delete classes", "Global vars"], ans: 1 },
-        { q: "DSA: Worst-case Quick Sort?", options: ["O(n log n)", "O(n^2)", "O(log n)", "O(n)"], ans: 1 },
-        { q: "DSA: Efficient DS for Priority Queue?", options: ["Array", "Linked List", "Binary Heap", "Hash Table"], ans: 2 },
-        { q: "DSA: Hash Table main advantage?", options: ["O(1) search", "Low memory", "Order", "Range query"], ans: 0 },
-        { q: "DSA: BST In-order traversal result?", options: ["Random", "Decreasing", "Increasing", "None"], ans: 2 }
-    ]
-};
-
-// Current Level selection
-const currentLevel = localStorage.getItem('userSkill') || 'Beginner';
-
-function startTest() {
-    testStarted = true;
-    document.getElementById('instruction-section').style.display = 'none';
-    document.getElementById('quiz-section').style.display = 'block';
-    loadQuestions();
-    startTimer();
-}
-
-function loadQuestions() {
-    document.getElementById('levelDisplay').innerText = "Level: " + currentLevel;
-    const questions = allQuestions[currentLevel];
-    const container = document.getElementById('questionsContainer');
-
-    // 1-20 Circle Navigation
-    let navHtml = `<div style="margin-bottom:20px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">`;
-    questions.forEach((_, i) => {
-        let isAnswered = userAnswers[i] !== undefined;
-        let isCurrent = i === currentQuestionIndex;
-        let bgColor = isCurrent ? '#00d4ff' : (isAnswered ? '#2ecc71' : '#fff');
-        let textColor = (isCurrent || isAnswered) ? 'white' : '#555';
-        navHtml += `<div onclick="goToQuestion(${i})" class="nav-box" style="background:${bgColor}; color:${textColor}; border:1px solid #ddd; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold;">${i+1}</div>`;
-    });
-    navHtml += `</div><hr style="margin-bottom:20px; border:0; border-top:1px solid #eee;">`;
-
-    // Active Question Display
-    const q = questions[currentQuestionIndex];
-    let qHtml = `<div class="question-block" style="border-left:5px solid #00d4ff;">
-        <p style="font-size:1.1rem;"><strong>Q${currentQuestionIndex + 1}:</strong> ${q.q}</p>
-        <div class="options-list">${q.options.map((opt, i) => `
-            <li style="list-style:none; margin:10px 0; background:white; border:1px solid #eee; border-radius:8px; padding:10px;">
-                <label style="cursor:pointer; display:block;">
-                    <input type="radio" name="q" value="${i}" ${userAnswers[currentQuestionIndex]==i?'checked':''} onchange="saveAnswer(${currentQuestionIndex}, ${i})"> ${opt}
-                </label>
-            </li>`).join('')}</div></div>`;
-
-    // Footer Buttons
-    let buttons = `<div style="display:flex; justify-content:space-between; margin-top:20px;">
-        <button type="button" class="auth-btn" style="background:#6c757d; color:white;" onclick="goToQuestion(${currentQuestionIndex-1})" ${currentQuestionIndex===0?'disabled':''}>Previous</button>
-        ${currentQuestionIndex < 19 ? 
-            `<button type="button" class="auth-btn" style="background:#00d4ff; color:white;" onclick="goToQuestion(${currentQuestionIndex+1})">Next Question</button>` : 
-            `<button type="button" class="auth-btn" style="background:#27ae60; color:white;" onclick="submitTest()">Submit Final Assessment</button>`}
-    </div>`;
-
-    container.innerHTML = navHtml + qHtml + buttons;
-}
-
-function saveAnswer(idx, val) { userAnswers[idx] = val; loadQuestions(); }
-function goToQuestion(idx) { if(idx >=0 && idx < 20) { currentQuestionIndex = idx; loadQuestions(); } }
-
-function startTimer() {
-    timer = setInterval(() => {
-        let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-        document.getElementById('time').innerText = `${m}:${s<10?'0':''}${s}`;
-        if (timeLeft-- <= 0) submitTest();
-    }, 1000);
-}
-
-async function submitTest() {
-    if(timer) clearInterval(timer);
-    testStarted = false;
-    let score = 0;
-    const questions = allQuestions[currentLevel];
-    
-    questions.forEach((item, i) => { 
-        if (userAnswers[i] != null && parseInt(userAnswers[i]) === item.ans) score++; 
-    });
-
-    let finalScore = score * 5; 
-    let email = localStorage.getItem('userEmail') || '';
-
-    if (score >= 10) {
-        alert(`Passed! Your score in ${currentLevel} level is ${finalScore}%. Generating Pathway...`);
-        // AI Path Generation logic
-        try {
-            const res = await fetch('http://127.0.0.1:8000/generate-ai-path/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ score: finalScore, level: currentLevel, email: email })
-            });
-            const data = await res.json();
-            localStorage.setItem('userRoadmap', JSON.stringify(data.roadmap));
-        } catch(e) { console.log("AI Error", e); }
-        
-        window.location.href = `/dashboard/?email=${email}&score=${finalScore}&level=${currentLevel}`;
-    } else {
-        alert(`Failed! Score: ${finalScore}%. Need 50% to pass. Try again!`);
-        location.reload();
+@media (max-width: 768px) {
+    .assessment-container {
+        width: 95%;
+        padding: 10px;
+    }
+    .option-btn {
+        font-size: 0.9rem;
+        padding: 12px;
     }
 }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
 
-// Security: Auto-submit on tab switch
-document.addEventListener("visibilitychange", () => { if (document.hidden && testStarted) submitTest(); });
-</script>
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
 
+    <div style="text-align:center; margin-bottom: 30px;">
+        <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:80px; width:80px; object-fit:contain; margin-bottom:15px;">
+        <h1 style="font-size:2rem; font-weight:800; color:#00d2ff; letter-spacing:1px; text-shadow:0 0 15px rgba(0,210,255,0.3); font-family:Poppins,sans-serif;">AI LEARNING PATH</h1>
+        <h2 id="levelHeader" style="color: var(--primary-blue); font-size: 1.5rem; margin-top: 10px;">{{ language }} Skill Assessment</h2>
+        <center><div id="timerBadge">⏱️ Time Remaining: <span id="time">25:00</span></div></center>
+    </div>
 
+    <div id="instruction-section">
+        <div style="text-align: center;">
+            <div style="font-size: 4rem;">📝</div>
+            <h2 style="margin: 10px 0; color: var(--primary-blue);">Assessment Guidelines</h2>
+            <p style="color: #666;">Ready to test your <b>{{ language }}</b> skills at <b>{{ level }}</b> level?</p>
+        </div>
+
+        <div class="instruction-grid">
+            <div class="ins-item" style="background: #eefbff;"><strong>🕒 25 Minutes</strong><br><small>Total time for {{ questions|length }} questions.</small></div>
+            <div class="ins-item" style="background: #f0fff4; border-color: var(--success-green);"><strong>✅ Navigation</strong><br><small>Jump questions using the grid.</small></div>
+            <div class="ins-item" style="background: #fff5f5; border-color: var(--danger-red);"><strong>🚫 No Tab Switch</strong><br><small>Auto-submit on tab switch.</small></div>
+            <div class="ins-item" style="background: #fffdf0; border-color: var(--warning-yellow);"><strong>🏅 Passing Grade</strong><br><small>Score 50% to complete.</small></div>
+        </div>
+
+        <button onclick="startTest()" class="btn btn-primary" style="background: var(--primary-blue);">I Understand, Begin Test</button>
+    </div>
+
+    <div id="quiz-section" style="display: none;">
+        <div class="nav-container" id="navGrid"></div>
+        <div class="quiz-card" id="questionsContainer"></div>
+    </div>
+
+    <div id="resultModal" class="modal-overlay">
+        <div class="result-card">
+            <div id="badgeIcon" style="font-size: 5.5rem; margin-bottom: 10px;">📖</div>
+            <h2 id="resTitle" style="color: var(--success-green); margin: 0; font-size: 1.8rem;">Assessment Completed!</h2>
+            <p style="color:#666; font-size: 1.1rem; margin-top: 5px;">Level: <b>{{ level }}</b></p>
+            <div id="scoreRing" class="score-circle"><span id="resPercent">0</span>%</div>
+            <p id="resFeedback" style="font-weight: 500; font-size: 1.1rem; color: #444; margin-bottom: 30px;"></p>
+            <div id="modalActionContainer"></div>
+        </div>
+    </div>
+
+<script>
+    
+    // --- 1. Data Integration from Django ---
+    const rawQuestions = [
+        {% for q in questions %}
+        {
+            id: "{{ q.id }}",
+            q: "{{ q.question_text|escapejs }}",
+            options: [
+                "{{ q.option1|escapejs }}",
+                "{{ q.option2|escapejs }}",
+                "{{ q.option3|escapejs }}",
+                "{{ q.option4|escapejs }}"
+            ],
+            ans: "{{ q.correct_answer|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    let timer = null;
+    let timeLeft = 25 * 60; 
+    let testStarted = false;
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    const totalQuestions = rawQuestions.length;
+
+    // --- 2. CSRF Token Helper (Kandippa venum) ---
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function startTest() {
+        if (totalQuestions === 0) {
+            alert("No questions found! Check your database.");
+            return;
+        }
+        testStarted = true;
+        document.getElementById('instruction-section').style.display = 'none';
+        document.getElementById('quiz-section').style.display = 'block';
+        document.getElementById('timerBadge').style.display = 'inline-block';
+        
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function() { window.history.go(1); };
+
+        loadQuestions();
+        startTimer();
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            const timeEl = document.getElementById('time');
+            if(timeEl) timeEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            
+            if (timeLeft <= 0) { 
+                clearInterval(timer); 
+                alert("Time is up! Submitting your test.");
+                submitTest(); 
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    // Tab Switch Detection
+    document.addEventListener("visibilitychange", () => {
+        if (testStarted && document.hidden) {
+            testStarted = false; 
+            clearInterval(timer);
+            submitTest(); 
+            alert("Security Alert: Tab switch detected. Your test has been submitted.");
+        }
+    });
+
+    function loadQuestions() {
+        if(totalQuestions === 0) return;
+        const q = rawQuestions[currentQuestionIndex];
+        
+        let gridHtml = "";
+        for (let i = 0; i < totalQuestions; i++) {
+            let status = (userAnswers[i] !== undefined) ? "answered" : "unanswered";
+            let active = (i === currentQuestionIndex) ? "active" : "";
+            gridHtml += `<div class="nav-circle ${status} ${active}" onclick="jumpTo(${i})">${i+1}</div>`;
+        }
+        document.getElementById('navGrid').innerHTML = gridHtml;
+
+        document.getElementById('questionsContainer').innerHTML = `
+            <p style="color:#777; font-weight:bold;">QUESTION ${currentQuestionIndex + 1} OF ${totalQuestions}</p>
+            <h3 style="margin-bottom:25px;">${q.q}</h3>
+            <div class="options-list">
+                ${q.options.map((opt) => `
+                    <label class="option-label">
+                        <input type="radio" name="quiz_opt" value="${opt}" ${userAnswers[currentQuestionIndex] === opt ? 'checked' : ''} onchange="save('${opt}')">
+                        <span style="margin-left:15px;">${opt}</span>
+                    </label>
+                `).join('')}
+            </div>
+            <div style="margin-top:35px; display:flex; justify-content:space-between; gap:15px;">
+                <button class="btn" onclick="move(-1)" ${currentQuestionIndex === 0 ? 'disabled' : ''} style="background:#eee; flex:1;">Previous</button>
+                ${currentQuestionIndex < totalQuestions - 1 ? 
+                    `<button class="btn btn-primary" onclick="move(1)" style="flex:2;">Next</button>` : 
+                    `<button class="btn btn-primary" onclick="submitTest()" style="background:var(--success-green); flex:2;">Final Submit</button>`}
+            </div>
+        `;
+    }
+
+    function save(val) { userAnswers[currentQuestionIndex] = val; loadQuestions(); }
+    function move(step) { currentQuestionIndex += step; loadQuestions(); }
+    function jumpTo(idx) { currentQuestionIndex = idx; loadQuestions(); }
+
+    function submitTest() {
+        // Prevent double submission logic fix
+        if(!testStarted && timeLeft > 0) return; 
+        testStarted = false; 
+        clearInterval(timer);
+        
+        let scoreCount = 0;
+        rawQuestions.forEach((item, i) => {
+            if (userAnswers[i] === item.ans) {
+                scoreCount++;
+            }
+        });
+        
+        let finalPercent = Math.round((scoreCount / totalQuestions) * 100);
+
+        fetch("{% url 'submit_test' %}", {
+            method: "POST",
+            headers: { 
+                "X-CSRFToken": getCookie('csrftoken'), // Fixed: uses helper
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ score: finalPercent })
+        })
+        .then(response => response.json())
+        .then(data => {
+            showResultUI(finalPercent);
+        })
+        .catch((err) => {
+            console.error("Submit Error:", err);
+            showResultUI(finalPercent);
+        });
+    }
+
+    function showResultUI(percent) {
+        document.getElementById('resPercent').innerText = percent;
+        const resTitle = document.getElementById('resTitle');
+        const badgeIcon = document.getElementById('badgeIcon');
+        const scoreRing = document.getElementById('scoreRing');
+        const actionContainer = document.getElementById('modalActionContainer');
+        const feedback = document.getElementById('resFeedback');
+
+        // Logic fix: Combined both versions for best UI
+        if (percent >= 50) {
+            badgeIcon.innerText = "🏆";
+            resTitle.innerText = "Assessment Passed!";
+            resTitle.style.color = "var(--success-green)";
+            scoreRing.style.borderColor = "var(--success-green)";
+            feedback.innerText = "Congratulations! You've earned your badge.";
+            actionContainer.innerHTML = `<button onclick="window.location.href='/'" class="btn btn-primary">Go to Home Page</button>`;
+        } else {
+            badgeIcon.innerText = "✍️";
+            resTitle.innerText = percent < 40 ? "Retake Required" : "Keep Practicing";
+            resTitle.style.color = "var(--danger-red)";
+            scoreRing.style.borderColor = "var(--danger-red)";
+            feedback.innerText = "Don't give up! Retake the test to improve your score.";
+            actionContainer.innerHTML = `
+                <button onclick="window.location.reload()" class="btn btn-primary" style="background:var(--warning-yellow); color:black;">Retake Test</button>
+                <button onclick="window.location.href='/'" class="btn" style="margin-top:10px; width:100%; border:1px solid #ccc;">Return Home</button>
+            `;
+        }
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+    function submitTest() {
+    if(!testStarted && timeLeft > 0) return; 
+    testStarted = false; 
+    clearInterval(timer);
+    
+    let scoreCount = 0;
+    rawQuestions.forEach((item, i) => {
+        if (userAnswers[i] === item.ans) {
+            scoreCount++;
+        }
+    });
+    
+    let finalPercent = Math.round((scoreCount / totalQuestions) * 100);
+
+    // Backend-ku score anuppurom
+    fetch("{% url 'submit_test' %}", {
+        method: "POST",
+        headers: { 
+            "X-CSRFToken": getCookie('csrftoken'),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ score: finalPercent })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Test success or fail-nu UI kaata porom
+        showResultUI(finalPercent);
+    });
+}
+
+function showResultUI(percent) {
+    document.getElementById('resPercent').innerText = percent;
+    const actionContainer = document.getElementById('modalActionContainer');
+
+    if (percent >= 50) {
+        // SUCCESS FLOW: Go to Dashboard
+        actionContainer.innerHTML = `
+            <button onclick="window.location.href='/home/'" class="btn btn-primary">Go to Dashboard</button>
+        `;
+    } else {
+        // FAIL FLOW: Retake or Home
+        actionContainer.innerHTML = `
+            <button onclick="window.location.reload()" class="btn btn-primary" style="background:var(--warning-yellow);">Retake Test</button>
+            <button onclick="window.location.href='/home/'" class="btn" style="margin-top:10px; width:100%; border:1px solid #ccc;">Return Home</button>
+        `;
+    }
+    document.getElementById('resultModal').style.display = 'flex';
+}
+fetch("{% url 'submit_test' %}", {
+    method: "POST",
+    headers: { 
+        "X-CSRFToken": getCookie('csrftoken'), // Cookie helper function mela irukanum
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ score: finalPercent })
+})
+.then(response => {
+    if (response.status === 403 || response.status === 302) {
+        console.error("Session expired or Login required");
+    }
+    return response.json();
+})
+.then(data => {
+    // UI-la result kaatitu, user 'Go to Dashboard' click panna '/home/' ku poga vaimom
+    showResultUI(finalPercent); 
+});
+    </script>
 </body>
-</html>

@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ track_name|title }} Roadmap | AI Learning Path</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #1e1e2f;
+            --bg: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.95);
+            --border: rgba(229, 231, 235, 1);
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f4f7fb, #e7ecf8);
+            margin: 0;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        .nav {
+            background: #1e1e2f;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .hero {
+            text-align: center; 
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #00d4ff, #1e1e2f);
+            color: #fff;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 5px; font-weight: 700; margin-top: 0; }
+        .hero p { font-size: 1rem; opacity: 0.9; margin: 0; }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        #roadmap-container {
+            width: 100vw;
+            height: calc(100vh - 170px);
+            background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
+            overflow: auto;
+            position: relative;
+        }
+
+        #roadmap-canvas {
+            position: relative;
+            padding-top: 50px;
+        }
+
+        #roadmap-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 220px;
+            padding: 20px;
+            background: var(--glass);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            z-index: 10;
+        }
+
+        .node:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .node.locked {
+            opacity: 0.6;
+            filter: grayscale(0.8);
+            cursor: not-allowed;
+        }
+
+        .node.completed {
+            border-color: #22c55e;
+            box-shadow: 0 12px 30px rgba(34,197,94,0.15);
+        }
+
+        .node i {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .node h4 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* DIRECTORY PANEL */
+        #directory-panel {
+            position: fixed;
+            left: -350px;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transition: left 0.4s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #directory-panel.open { left: 0; }
+
+        .phase-group { margin-bottom: 25px; }
+        .phase-header { 
+            background: #f1f5f9; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            color: #1e293b; 
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        .topic-link {
+            display: block;
+            padding: 8px 15px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .topic-link:hover { background: #f8fafc; color: var(--primary); transform: translateX(5px); }
+
+        .dir-toggle {
+            position: fixed;
+            left: 20px;
+            bottom: 30px;
+            background: #1e1e2f;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 1001;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .dir-toggle:hover { transform: scale(1.05); background: var(--primary); }
+
+        @media (max-width: 768px) {
+            .nav { padding: 10px 20px; }
+            .hero h1 { font-size: 1.6rem; }
+            #roadmap-container { height: calc(100vh - 140px); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav" style="padding: 5px 40px; height: auto;">
+    <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none; color:white;">
+        <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+        <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+    </a>
+    <div id="track-progress" style="font-size: 0.85rem; background: rgba(255,255,255,0.1); padding: 6px 18px; border-radius: 20px; font-weight:600;">
+        Progress: 0%
+    </div>
+</nav>
+
+<div class="hero">
+    <h1>{{ track_name|title }} Learning Path</h1>
+    <p>Follow the phases to master all concepts</p>
+</div>
+
+<div id="roadmap-container">
+    <div id="roadmap-canvas">
+        <svg id="roadmap-svg"></svg>
+        <div id="nodes-layer"></div>
+    </div>
+</div>
+
+<div id="directory-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="margin:0;">Phase Topics</h3>
+        <i class="fas fa-times" onclick="toggleDirectory()" style="cursor:pointer; font-size:1.2rem;"></i>
+    </div>
+    <div id="directory-content"></div>
+</div>
+
+<div class="dir-toggle" onclick="toggleDirectory()">
+    <i class="fas fa-list-ul"></i> View Topics Directory
+</div>
+
+<script src="{% static 'tracks_data.js' %}?v=8"></script>
+<script>
+    const trackName = "{{ track_name }}";
+    const data = window.tracksData[trackName];
+    const nodesLayer = document.getElementById('nodes-layer');
+    const svg = document.getElementById('roadmap-svg');
+
+    function toggleDirectory() {
+        document.getElementById('directory-panel').classList.toggle('open');
+    }
+
+    function renderDirectory() {
+        const dirContent = document.getElementById('directory-content');
+        if (!data || !data.nodes) return;
+        dirContent.innerHTML = '';
+        const phases = {};
+        data.nodes.forEach(node => {
+            const p = node.phase || 1;
+            if (!phases[p]) phases[p] = [];
+            phases[p].push(node);
+        });
+        Object.keys(phases).sort((a,b) => a-b).forEach(p => {
+            const group = document.createElement('div');
+            group.className = 'phase-group';
+            group.innerHTML = `<div class="phase-header">PHASE ${p}: ${getPhaseTitle(p)}</div>`;
+            phases[p].forEach(node => {
+                const link = document.createElement('a');
+                link.href = "#";
+                link.className = 'topic-link';
+                link.innerHTML = `<i class="fas ${isTopicCompleted(node.id) ? 'fa-check-circle' : 'fa-circle'}" style="margin-right:8px; font-size:0.7rem; color:${isTopicCompleted(node.id) ? '#22c55e' : '#cbd5e1'}"></i> ${node.title}`;
+                link.onclick = (e) => { e.preventDefault(); focusNode(node.id); toggleDirectory(); };
+                group.appendChild(link);
+            });
+            dirContent.appendChild(group);
+        });
+    }
+
+    function focusNode(nodeId) {
+        const node = data.nodes.find(n => n.id === nodeId);
+        if (!node) return;
+        const container = document.getElementById('roadmap-container');
+        const minXNode = Math.min(...data.nodes.map(n => n.x));
+        const maxXNode = Math.max(...data.nodes.map(n => n.x));
+        const roadmapWidth = maxXNode - minXNode + 600; 
+        const offset = (roadmapWidth - (maxXNode - minXNode)) / 2 - minXNode;
+        const rect = container.getBoundingClientRect();
+        const scrollX = (node.x + offset) - (rect.width / 2) + 110; 
+        const scrollY = node.y - (rect.height / 2) + 80;
+        container.scrollTo({ left: scrollX, top: scrollY, behavior: 'smooth' });
+    }
+
+    function renderRoadmap() {
+        if (!data || !data.nodes) return;
+        nodesLayer.innerHTML = '';
+        svg.innerHTML = '';
+        let completedCount = 0;
+
+        const minXNode = Math.min(...data.nodes.map(n => n.x));
+        const maxXNode = Math.max(...data.nodes.map(n => n.x));
+        const roadmapWidth = maxXNode - minXNode + 600; 
+        const offset = (roadmapWidth - (maxXNode - minXNode)) / 2 - minXNode;
+        const finalHeight = Math.max(...data.nodes.map(n => n.y)) + 400; 
+
+        document.getElementById('roadmap-canvas').style.width = roadmapWidth + 'px';
+        document.getElementById('roadmap-canvas').style.height = finalHeight + 'px';
+        svg.setAttribute('width', roadmapWidth);
+        svg.setAttribute('height', finalHeight);
+
+        // Connections
+        data.nodes.forEach(node => {
+            if (node.parent) {
+                const parent = data.nodes.find(n => n.id === node.parent);
+                if (parent) drawConnection(parent.x + offset + 110, parent.y + 80, node.x + offset + 110, node.y);
+            }
+        });
+
+        // Phase Labels
+        const phases = {};
+        data.nodes.forEach(n => {
+            const p = n.phase || 1;
+            if (!phases[p]) phases[p] = { minX: Infinity, maxX: -Infinity, minY: Infinity };
+            phases[p].minX = Math.min(phases[p].minX, n.x);
+            phases[p].maxX = Math.max(phases[p].maxX, n.x);
+            phases[p].minY = Math.min(phases[p].minY, n.y);
+        });
+
+        Object.keys(phases).forEach(p => {
+            const ph = phases[p];
+            const phaseLabel = document.createElement('div');
+            phaseLabel.style.position = 'absolute';
+            phaseLabel.style.left = ((ph.minX + ph.maxX)/2 + offset + 110 - 150) + 'px';
+            phaseLabel.style.top = (ph.minY - 100) + 'px';
+            phaseLabel.style.width = '300px';
+            phaseLabel.style.textAlign = 'center';
+            phaseLabel.style.color = '#1e293b';
+            phaseLabel.style.fontSize = '1.2rem';
+            phaseLabel.style.fontWeight = '800';
+            phaseLabel.style.letterSpacing = '1px';
+            phaseLabel.style.opacity = '0.3';
+            phaseLabel.style.pointerEvents = 'none';
+            phaseLabel.innerHTML = `PHASE ${p}: ${getPhaseTitle(p)}`;
+            nodesLayer.appendChild(phaseLabel);
+        });
+
+        // Nodes
+        data.nodes.forEach(node => {
+            if (isTopicCompleted(node.id)) {
+                completedCount++;
+                node.status = 'completed';
+            } else {
+                node.status = 'available'; // Unlock all nodes by default for free navigation
+            }
+            renderNode(node, offset);
+        });
+
+        const progressPercent = Math.round((completedCount / data.nodes.length) * 100);
+        document.getElementById('track-progress').innerText = `Progress: ${progressPercent}%`;
+    }
+
+    function renderNode(node, offset) {
+        const el = document.createElement('div');
+        el.className = `node ${node.status}`;
+        el.style.left = `${node.x + offset}px`;
+        el.style.top = `${node.y}px`;
+        
+        let icon = 'fa-code';
+        const iconMap = { 'basics': 'fa-rocket', 'variables': 'fa-id-card', 'operators': 'fa-calculator', 'loops': 'fa-redo' };
+        icon = iconMap[node.id.split('_').pop()] || 'fa-code';
+        
+        el.innerHTML = `
+            <div style="position:absolute; top:-12px; right:-12px; background:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                <i class="fas ${node.status === 'locked' ? 'fa-lock' : isTopicCompleted(node.id) ? 'fa-check-circle' : 'fa-circle'}" style="font-size:0.75rem; color:${node.status === 'locked' ? '#94a3b8' : isTopicCompleted(node.id) ? '#22c55e' : '#6b7280'}"></i>
+            </div>
+            <i class="fas ${icon}"></i>
+            <h4>${node.title}</h4>
+            <p style="font-size:0.7rem; margin-top:8px; color:#94a3b8; font-weight:600;">PHASE ${node.phase || 1}</p>
+        `;
+        if (isTopicCompleted(node.id)) el.classList.add('completed');
+        el.onclick = () => { window.location.href = `/topic-detail/?track=${trackName}&topic=${node.id}`; };
+        nodesLayer.appendChild(el);
+    }
+
+    function getPhaseTitle(p) {
+        const t = { 1: "FOUNDATION", 2: "INTERMEDIATE", 3: "ADVANCED", 4: "EXPERT", 5: "MASTER" };
+        return t[p] || "EXPANSION";
+    }
+
+    function drawConnection(x1, y1, x2, y2) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const dy = y2 - y1;
+        const d = `M ${x1} ${y1} C ${x1} ${y1 + dy/2}, ${x2} ${y2 - dy/2}, ${x2} ${y2}`;
+        line.setAttribute("d", d);
+        line.setAttribute("stroke", "#cbd5e1");
+        line.setAttribute("stroke-width", "3");
+        line.setAttribute("fill", "none");
+        line.setAttribute("stroke-dasharray", "8, 8");
+        svg.appendChild(line);
+    }
+
+    function isTopicCompleted(nodeId) { return localStorage.getItem(`completed_${nodeId}`) === 'true'; }
+
+    window.onload = () => {
+        renderRoadmap();
+        renderDirectory();
+    };
+</script>
+</body>
+</html>

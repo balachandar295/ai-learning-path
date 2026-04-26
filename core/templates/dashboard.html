@@ -1,266 +1,536 @@
+{% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Path Finder | Pro Dashboard</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
-        :root { 
-            --bg: #030712; 
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary: #00d4ff; 
-            --secondary: #6366f1; 
-            --accent: #f43f5e;
-            --text-dim: #64748b;
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-body: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --nav-dark: #0f172a;
+            --border: #e2e8f0;
+            --leetcode-gray: #ebedf0;
+            --leetcode-green: #22c55e;
         }
 
-        body { 
-            background-color: var(--bg); 
-            color: #f8fafc;
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(0, 212, 255, 0.1) 0%, transparent 35%),
-                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 35%);
-            min-height: 100vh;
         }
 
-        .navbar { 
-            background: rgba(3, 7, 18, 0.8);
-            backdrop-filter: blur(15px);
-            padding: 1rem 4rem;
+        /* NAVBAR */
+        .navbar {
+            background: var(--nav-dark);
+            padding: 12px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--glass-border);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .logo { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; color: var(--primary); font-size: 1.5rem; }
-
-        .dashboard-grid { 
-            display: grid; 
-            grid-template-columns: 300px 1fr 340px; 
-            gap: 2rem; 
-            padding: 2rem 4rem; 
-        }
-
-        .glass-card { 
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .badge { 
-            background: rgba(0, 212, 255, 0.1); 
-            border: 1px solid var(--primary); 
-            color: var(--primary);
-            padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .analysis-grid { display: flex; align-items: center; justify-content: space-around; gap: 2rem; }
-
-        .mini-stat { background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; }
-        .mini-stat h4 { margin: 0; color: var(--text-dim); font-size: 0.8rem; }
-        .mini-stat p { margin: 5px 0 0; font-size: 1.2rem; font-weight: bold; color: var(--primary); }
-
-        /* Button Neon Styling Fix */
-        .neon-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border: none;
             color: white;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-            transition: 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .neon-btn:hover { transform: translateY(-2px); opacity: 0.9; box-shadow: 0 0 20px var(--primary); }
+
+        .logo {
+            font-family: 'Orbitron';
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* NEW: USER PROFILE STYLE */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(0,210,255,0.3);
+        }
+        .user-profile img {
+            border-radius: 8px;
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+            border: 1px solid var(--primary);
+        }
+        .user-profile span {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* DASHBOARD GRID */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 24px;
+            padding: 30px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .glass-card:hover { transform: translateY(-3px); }
+
+        .analysis-grid { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+        .mini-stat {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+        }
+        .mini-stat h4 { font-size: 0.7rem; color: var(--text-light); margin: 0; text-transform: uppercase; }
+        .mini-stat p { font-size: 1.3rem; font-weight: 700; color: var(--nav-dark); margin: 8px 0 0; }
+
+        #heatmap-container {
+            overflow-x: auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #heatmap {
+            display: grid;
+            grid-template-columns: repeat(53, 12px);
+            grid-template-rows: repeat(7, 12px);
+            gap: 3px;
+        }
+
+        .heatmap-box {
+            width: 12px; height: 12px;
+            background-color: var(--leetcode-gray);
+            border-radius: 2px;
+        }
+
+        .level-1 { background-color: #9be9a8 !important; }
+        .level-2 { background-color: #40c463 !important; }
+        .level-3 { background-color: #30a14e !important; }
+        .level-4 { background-color: #216e39 !important; }
 
         .roadmap-step {
-            background: rgba(255,255,255,0.05);
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
             padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
-    </style>
+
+        .neon-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 14px; border-radius: 10px;
+            font-weight: 600; cursor: pointer; width: 100%;
+        }
+
+        .badge {
+            background: #e0f2fe; color: #0369a1; padding: 5px 12px;
+            border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+        }
+        
+@media (max-width: 768px) {
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column; /* Stack cards vertically */
+        width: 100%;
+        padding: 10px;
+    }
+
+    .glass-card {
+        width: 100% !important; /* Forces card to stay inside */
+        margin-bottom: 15px;
+    }
+    
+    .navbar {
+        width: 100%;
+        padding: 10px;
+        flex-wrap: wrap; /* Wraps logo and buttons */
+    }
+}
+/* Dark Green for Level 1 */
+.heatmap-box.level-1 {
+    background-color: #2ea043 !important; /* GitHub style green */
+}
+
+/* Blue for Level 2 */
+.heatmap-box.level-2 {
+    background-color: #0f621e !important; 
+}
+.checkpoint-item:hover {
+    background: rgba(0, 210, 255, 0.05);
+}
+
+.task-checkbox:checked + label {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+/* Better Checkpoint Styling */
+.checkpoint-item {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.checkpoint-item:hover {
+    background: rgba(0, 210, 255, 0.08);
+    border-color: rgba(0, 210, 255, 0.2);
+    transform: translateX(5px);
+}
+
+/* Striking through completed tasks */
+.task-checkbox:checked + label {
+    text-decoration: line-through;
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+/* Glass Card Polish */
+.glass-card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
 </head>
 <body>
-
-<nav class="navbar">
-    <div class="logo">AI_COMMAND_CENTER</div>
+<nav class="navbar" style="padding:5px 60px;">
+    <div class="logo" style="display:flex; align-items:center; gap:12px;">
+        <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px;width:65px;object-fit:contain;">
+        <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+    </div>
+    
     <div style="display: flex; gap: 20px; align-items: center;">
-        <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fa fa-circle" style="color:var(--primary)"></i> SYSTEM_ONLINE</span>
-        <button onclick="window.location.href='/login/'" style="background:none; border: 1px solid var(--accent); color: var(--accent); padding: 5px 15px; border-radius: 8px; cursor: pointer;">EXIT</button>
+        <div class="user-profile">
+            {% if user.socialaccount_set.all.0.get_avatar_url %}
+                <img id="nav-profile-pic" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Profile" style="background: #e2e8f0; padding: 0;">
+            {% else %}
+                <img id="nav-profile-pic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" alt="Profile" style="background: #cbd5e1; padding: 2px;">
+            {% endif %}
+            
+            <span>
+                {% if user.first_name %}
+                    {{ user.first_name }}
+                {% else %}
+                    {{ user.username|upper }}
+                {% endif %}
+            </span>
+        </div>
+
+        <button onclick="window.location.href='/logout/'" style="background:none; border: 1px solid var(--primary); color: var(--primary); padding: 5px 15px; border-radius: 8px; cursor: pointer;">EXIT</button>
     </div>
 </nav>
-
 <div class="dashboard-grid">
     <aside>
         <div class="glass-card">
             <div style="text-align: center;">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ username }}" style="width: 80px; margin-bottom: 1rem; filter: drop-shadow(0 0 10px var(--primary));">
-                <h3 style="margin: 0; font-family: 'Orbitron'; color: white;">{{ username|upper|default:"CHIEF_OPERATOR" }}</h3>
-                <p id="sidebar-tier" style="color: var(--text-dim); font-size: 0.8rem;">Tier: Beginner Strategist</p>
+                <div style="position: relative; width: 100px; margin: 0 auto 1rem;">
+                    {% if user.socialaccount_set.all.0.get_avatar_url %}
+                        <img id="main-profile-pic" src="{{ user.socialaccount_set.all.0.get_avatar_url }}" style="width: 100px; height: 100px; border-radius: 16px; object-fit: cover; background: #e2e8f0; border: none; padding: 0;">
+                    {% else %}
+                        <img id="main-profile-pic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" style="width: 100px; height: 100px; border-radius: 16px; object-fit: cover; background: #cbd5e1; border: none; padding: 10px;">
+                    {% endif %}
+                    
+                    <label for="profile-upload" style="position: absolute; bottom: -8px; right: -8px; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-plus" style="font-size: 0.9rem;"></i>
+                    </label>
+                    <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+                </div>
+
+                <h3 style="margin: 0; font-family: 'Orbitron';">
+                    {% if user.first_name %}{{ user.first_name|upper }}{% else %}{{ user.username|upper }}{% endif %}
+                </h3>
+                <p style="color: var(--text-light); font-size: 0.8rem;">Tier: Beginner Strategist</p>
             </div>
+            
             <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center;">
-                <span class="badge">{{ language|default:"Python" }}</span>
-                <span class="badge">{{ duration|default:"15 Days" }}</span>
-                <span class="badge">{{ goal|default:"Mastery" }}</span>
+                <span class="badge">{{ language }}</span>
+                <span class="badge">{{ level }}</span>
+                <span class="badge">Streak: {{ streak }}</span>
             </div>
         </div>
 
         <div class="glass-card">
-            <h4 style="margin-top: 0;">Daily Checkpoints</h4>
-            <div id="goals-list" style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 12px;">
-                </div>
-        </div>
+    <h4 style="margin-top: 0; font-family: 'Orbitron'; font-size: 0.9rem; color: var(--primary);">
+        <i class="fas fa-tasks"></i> Daily Checkpoints
+    </h4>
+    <div id="goals-list" style="margin-top: 15px;">
+        <p style="color:gray; font-size:0.8rem;">Loading tasks...</p>
+    </div>
+</div>
     </aside>
 
     <main>
         <div class="glass-card">
             <h3 style="margin-top: 0;">Neural Performance Index</h3>
             <div class="analysis-grid">
-                <div style="position: relative; width: 180px; height: 180px; flex-shrink: 0;">
+                <div style="position: relative; width: 150px; height: 150px;">
                     <canvas id="mainChart"></canvas>
-                    <div style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align: center; z-index: 10;">
-                        <span id="live-score" style="font-size: 2.2rem; font-weight: bold; color: var(--primary); font-family: 'Orbitron';">0</span>
+                    <div style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align: center;">
+                        <span id="live-score" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">0</span>
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-grow: 1;">
-                    <div class="mini-stat"><h4>Accuracy</h4><p id="live-accuracy">0%</p></div>
-                    <div class="mini-stat"><h4>Streak</h4><p>{{ streak|default:"1" }} Days</p></div>
-                    <div class="mini-stat"><h4>Target</h4><p>{{ duration|default:"20" }}</p></div>
-                    <div class="mini-stat"><h4>Level</h4><p id="live-level">Beginner</p></div>
+                    <div class="mini-stat">
+                        <h4>Accuracy</h4>
+                        <p id="live-accuracy">{{ score }}%</p>
+                    </div>
+                    <div class="mini-stat">
+                        <h4>Streak</h4>
+                        <p>{{ streak|default:"1" }}</p>
+                    </div>
+                    <div class="mini-stat">
+                        <h4>Target</h4>
+                        <p>100</p>
+                    </div>
+                    <div class="mini-stat">
+                        <h4>Level</h4>
+                        <p id="live-level">{{ level }}</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="glass-card">
-            <h4 style="margin-top:0;">Global Activity Heatmap</h4>
-            <div id="heatmap" style="display: grid; grid-template-columns: repeat(35, 1fr); gap: 4px;"></div>
-        </div>
-
-        <div class="glass-card">
-            <h3 style="color: var(--primary); font-family:'Orbitron'; font-size:1rem; margin-bottom:20px;">
-                <i class="fas fa-microchip"></i> AI_ROADMAP_GENERATED
-            </h3>
-            <div id="roadmap-display"></div>
+            <h4 style="margin-top:0;"><i class="fas fa-calendar-alt"></i> Global Activity Heatmap</h4>
+            <div id="heatmap-container">
+                <div id="heatmap" style="display: flex; flex-wrap: wrap; gap: 4px;">
+                    {% for day in activity_data %}
+                        <div class="heatmap-box {% if day.is_done %}level-1{% endif %}"></div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </main>
 
     <aside>
-        <div class="glass-card">
-            <h4 style="margin-top: 0; color: var(--primary);">AI Suggested Content</h4>
-            <div style="display: flex; gap: 1rem; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; align-items: center; margin-bottom: 15px;">
-                <div style="width: 40px; height: 40px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i class="fa fa-play"></i></div>
-                <div>
-                    <strong style="font-size: 0.8rem;">{{ language }} Mastery</strong>
-                    <p style="font-size: 0.7rem; color: var(--text-dim);">Curated Tutorial Video</p>
-                </div>
-            </div>
-            <button onclick="window.location.reload()" class="neon-btn">REGENERATE PATH</button>
-        </div>
-
-        <div class="glass-card">
-            <h4>System Log</h4>
-            <div style="font-size: 0.7rem; font-family: 'Courier New', monospace; color: var(--text-dim); line-height: 1.8;">
-                <p>> User: {{ username|default:"CHIEF" }} active</p>
-                <p style="color: var(--primary);">> Neural link: STABLE</p>
-                <p style="color: var(--secondary);">> Goal: {{ goal }}</p>
+        <div class="glass-card" style="max-height: 85vh; overflow-y: auto;">
+            <h3 style="color: var(--primary); font-family:'Orbitron'; font-size:1rem; margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span><i class="fas fa-microchip"></i> AI_ROADMAP</span>
+                <button onclick="window.location.reload()" style="background:none; border:none; color:var(--text-light); cursor:pointer;"><i class="fas fa-sync-alt fa-xs"></i></button>
+            </h3>
+            
+            <div id="roadmap-display" class="roadmap-container">
+                {% if roadmap %}
+                    {% for phase in roadmap %}
+                    <div class="roadmap-step" style="background: #f8fafc; border: 1px solid var(--border); border-left: 4px solid #00d2ff; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <h4 style="margin:0; color:var(--nav-dark); font-size: 0.85rem;">{{ phase.title }}</h4>
+                        </div>
+                        <p style="margin:5px 0; font-size:0.75rem; color: var(--text-light);">{{ phase.description }}</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top:5px;">
+                            <span style="font-size: 0.65rem; background: #e0f7ff; color: #007bb5; padding: 1px 6px; border-radius: 4px; font-weight: bold;">
+                                {{ phase.week|default:"Week 1" }}
+                            </span>
+                            <span style="font-size: 0.7rem;">
+                                {% if phase.completed %}
+                                    <i class="fas fa-check-circle" style="color: #22c55e;"></i>
+                                {% else %}
+                                    <i class="fas fa-circle-notch fa-spin" style="color: #f59e0b;"></i>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="font-size: 0.75rem; color: var(--text-light); text-align: center;">Complete assessment to unlock path.</p>
+                    <button onclick="window.location.href='/assessment/'" class="neon-btn" style="padding: 8px; font-size: 0.7rem;">START</button>
+                {% endif %}
             </div>
         </div>
     </aside>
 </div>
-
 <script>
+    // 1. DATA PARSING (Proper way to handle Django data in JS)
+    // safe filter kooda escapejs use pannuna dhaan data break aagaama varum
+    const roadmapData = JSON.parse('{{ roadmap_json|safe|default:"[]" }}');
+    const activityData = JSON.parse('{{ activity_json|safe|default:"[]" }}');
+    const initialScore = parseInt("{{ score|default:0 }}");
+    
     let myChart;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Data Retrieval
-        const userScore = parseInt(localStorage.getItem('userScore')) || 0;
-        const userLevel = localStorage.getItem('userSkill') || 'Beginner';
-        const roadmapData = JSON.parse(localStorage.getItem('userRoadmap')) || [
-            {title: "Day 1-5: Basic Syntax", desc: "Focus on Variables and Loops"},
-            {title: "Day 6-10: Logic", desc: "Functions and Arrays"},
-            {title: "Day 11-15: Final Project", desc: "Build a mini application"}
-        ];
-        const maxScore = 20;
+        
+        // --- A. ADVANCED HEATMAP (Fixing Color & Extra Boxes) ---
+        const heatmap = document.getElementById('heatmap');
+        if (heatmap) {
+            heatmap.innerHTML = ''; // Reset existing boxes
+            
+            // Calculate total problems solved locally
+            let solvedCount = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('solved_') && localStorage.getItem(key) === 'true') {
+                    solvedCount++;
+                }
+            }
+            
+            // Default-a 371 boxes (53 weeks * 7 days) generate pannuvom
+            for (let i = 0; i < 371; i++) {
+                const box = document.createElement('div');
+                box.className = 'heatmap-box';
+                
+                // Advanced Heatmap Logic: 1 Problem = 1 Green Box
+                let fromEndIndex = 370 - i; // 0 for the last box
+                
+                if (solvedCount > fromEndIndex) {
+                    // Turn exactly one box completely green per solved problem
+                    box.classList.add('level-1');
+                }
+                
+                heatmap.appendChild(box);
+            }
+        }
 
-        // 2. UI Updates
-        document.getElementById('live-score').innerText = userScore;
-        document.getElementById('live-accuracy').innerText = Math.round((userScore/maxScore)*100) + "%";
-        document.getElementById('live-level').innerText = userLevel;
-        document.getElementById('sidebar-tier').innerText = "Tier: " + userLevel + " Strategist";
-
-        // 3. Initialize Chart
+        // --- B. NEURAL PERFORMANCE INDEX (Fixing 0% & Chart) ---
         const ctx = document.getElementById('mainChart').getContext('2d');
+        
         myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    data: [userScore, Math.max(0.1, maxScore - userScore)],
-                    backgroundColor: ['#00d4ff', 'rgba(255, 255, 255, 0.05)'],
+                    // Initial score dynamic-a inge load aagum
+                    data: [initialScore, 100 - initialScore],
+                    backgroundColor: ['#00d2ff', '#e2e8f0'],
                     borderWidth: 0,
                     borderRadius: 10
                 }]
             },
-            options: { cutout: '85%', plugins: { legend: { display: false } } }
+            options: { 
+                cutout: '85%', // Thinner ring for modern look
+                plugins: { legend: { display: false } },
+                animation: { duration: 1500, easing: 'easeOutBounce' }
+            }
         });
 
-        // 4. Roadmap & Checkpoints Loading
-        const roadmapDisplay = document.getElementById('roadmap-display');
-        const checkpointsList = document.getElementById('goals-list');
+        // Center text label update
+        const scoreDisplay = document.getElementById('live-score');
+        scoreDisplay.innerText = initialScore;
 
-        roadmapDisplay.innerHTML = '';
-        checkpointsList.innerHTML = '';
-        roadmapData.forEach((step, index) => {
-            const title = step.title || step;
-            roadmapDisplay.innerHTML += `<div class="roadmap-step">
-                <h4 style="color: var(--primary); margin: 0;">${title}</h4>
-                <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--text-dim);">${step.desc || ''}</p>
-            </div>`;
-
-            checkpointsList.innerHTML += `<div style="display: flex; align-items: center; gap: 10px; background:rgba(255,255,255,0.03); padding:8px; border-radius:8px;">
-                <input type="checkbox" id="g${index}" class="task-checkbox" style="width:16px; height:16px; accent-color: var(--primary);">
-                <label for="g${index}" style="cursor:pointer">${title}</label>
-            </div>`;
-        });
-
-        // 5. Live Score & Chart Logic
-        document.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.addEventListener('change', function() {
-                let scoreText = document.getElementById('live-score');
-                let currentScore = parseInt(scoreText.innerText);
-                currentScore = this.checked ? currentScore + 1 : currentScore - 1;
-                
-                scoreText.innerText = currentScore;
-                document.getElementById('live-accuracy').innerText = Math.round((currentScore/maxScore)*100) + "%";
-                
-                myChart.data.datasets[0].data = [currentScore, Math.max(0.1, maxScore - currentScore)];
-                myChart.update();
+        // --- C. DYNAMIC CHECKPOINTS ---
+        const checkpointList = document.getElementById('goals-list');
+        if (checkpointList && roadmapData.length > 0) {
+            checkpointList.innerHTML = ''; 
+            roadmapData.slice(0, 3).forEach((phase, index) => {
+                const taskHtml = `
+                    <div class="checkpoint-item" style="display:flex; gap:12px; margin-bottom:12px; align-items:center;">
+                        <input type="checkbox" id="task-${index}" class="task-checkbox" data-val="10"
+                               style="width:20px; height:20px; cursor:pointer; accent-color:#00d2ff;">
+                        <label for="task-${index}" style="font-size:0.9rem; color:var(--text-dark); cursor:pointer;">
+                            ${phase.title}
+                        </label>
+                    </div>`;
+                checkpointList.insertAdjacentHTML('beforeend', taskHtml);
             });
+        }
+
+        // --- D. AUTO-UPDATE LOGIC (Checkbox click panna chart move aagum) ---
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('task-checkbox')) {
+                let currentScore = parseInt(scoreDisplay.innerText);
+                const val = parseInt(e.target.dataset.val);
+
+                if (e.target.checked) {
+                    currentScore = Math.min(100, currentScore + val);
+                } else {
+                    currentScore = Math.max(0, currentScore - val);
+                }
+
+                // Smoothly update UI
+                scoreDisplay.innerText = currentScore;
+                document.getElementById('live-accuracy').innerText = currentScore + "%";
+                
+                // Chart refresh
+                myChart.data.datasets[0].data = [currentScore, 100 - currentScore];
+                myChart.update();
+            }
         });
 
-        // 6. Heatmap
-        const heatmap = document.getElementById('heatmap');
-        for (let i = 0; i < 140; i++) {
-            const cell = document.createElement('div');
-            cell.style.cssText = `aspect-ratio: 1/1; border-radius: 2px; background: rgba(0, 212, 255, ${Math.random() * 0.4});`;
-            heatmap.appendChild(cell);
+        // --- E. PROFILE UPLOAD LOGIC ---
+        const mainPic = document.getElementById('main-profile-pic');
+        const navPic = document.getElementById('nav-profile-pic');
+        const uploadInput = document.getElementById('profile-upload');
+        
+        // Load existing image from localStorage
+        const savedImg = localStorage.getItem('custom_profile_img');
+        if (savedImg) {
+            if (mainPic) { mainPic.src = savedImg; mainPic.style.padding = '0'; }
+            if (navPic) { navPic.src = savedImg; navPic.style.padding = '0'; }
+        }
+
+        // Handle new image upload
+        if (uploadInput) {
+            uploadInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const base64Str = e.target.result;
+                        localStorage.setItem('custom_profile_img', base64Str);
+                        if (mainPic) { mainPic.src = base64Str; mainPic.style.padding = '0'; }
+                        if (navPic) { navPic.src = base64Str; navPic.style.padding = '0'; }
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
         }
     });
 </script>
+{% include 'ai_bot.html' %}
 </body>
 </html>

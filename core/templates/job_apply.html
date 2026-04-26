@@ -1,0 +1,322 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job | AI Learning Path</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-body: #f0f2f5;
+            --text-dark: #334155;
+            --nav-dark: #1a1f36;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 75px; 
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--nav-dark);
+            height: 75px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .nav-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .apply-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+
+        .apply-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .apply-header h2 {
+            margin: 0;
+            color: var(--nav-dark);
+            font-size: 1.8rem;
+        }
+
+        .apply-header p {
+            color: #64748b;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            background: #f8fafc;
+            color: #334155;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+        }
+
+        .success-overlay i {
+            font-size: 5rem;
+            color: #4ade80;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar" style="padding: 5px 40px; height: auto;">
+        <a href="/home/" class="nav-logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <div class="nav-center">
+            <a href="/jobs/" style="color: #fff; text-decoration: none; font-weight: 600;"><i class="fas fa-arrow-left"></i> Back to Jobs</a>
+        </div>
+    </nav>
+
+    <div class="apply-card">
+        <div class="apply-header">
+            <h2>Easy Apply Form</h2>
+            <p id="jobDetails">Loading job details...</p>
+        </div>
+
+        <form id="applyForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="full_name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email address" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="Enter your mobile number" required>
+            </div>
+            <div class="form-group">
+                <label>LinkedIn Profile (Optional)</label>
+                <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+            </div>
+            <div class="form-group">
+                <label>Resume / CV</label>
+                <div class="file-upload">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--secondary); margin-bottom: 10px;"></i>
+                    <p style="margin:0; font-size: 0.9rem; color: #64748b;">Drag & drop your resume here or click to browse</p>
+                    <input type="file" style="display:none;" required>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit Application</button>
+        </form>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="success-overlay" id="successScreen">
+        <i class="fas fa-check-circle"></i>
+        <h1>Application Submitted!</h1>
+        <p>Your application has been successfully saved to the database.</p>
+        <a href="/jobs/" class="back-btn">Go back to Jobs Board</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title') || 'Selected Role';
+            const company = urlParams.get('company') || 'Company';
+
+            const detailsEl = document.getElementById('jobDetails');
+            detailsEl.innerHTML = `Applying for <strong>${title}</strong> at <strong>${company}</strong>`;
+
+            const form = document.getElementById('applyForm');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const btn = form.querySelector('.submit-btn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                btn.disabled = true;
+
+                const formData = new FormData();
+                formData.append('full_name', document.getElementById('full_name').value);
+                formData.append('email', document.getElementById('email').value);
+                formData.append('phone', document.getElementById('phone').value);
+                formData.append('linkedin', document.getElementById('linkedin').value);
+                formData.append('job_title', title);
+                formData.append('company', company);
+
+                try {
+                    const response = await fetch('/job-apply/', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    });
+
+                    if(response.ok) {
+                        document.getElementById('successScreen').style.display = 'flex';
+                    } else {
+                        alert("There was an error saving your application.");
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    alert("Network error occurred.");
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+                    btn.disabled = false;
+                }
+            });
+
+            const fileUpload = document.querySelector('.file-upload');
+            fileUpload.addEventListener('click', () => {
+                alert("This is a demo frontend. Normally this opens file explorer.");
+            });
+        });
+    </script>
+</body>
+</html>

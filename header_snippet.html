@@ -1,0 +1,341 @@
+        {% load static %}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AI-Assisted Learning Path Generator</title>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link rel="stylesheet" href="{% static 'basic.css' %}">
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <style>
+                /* Premium Lab Grid Styling - Hexagonal Track Design */
+                .lab-container {
+                    display: none;
+                    padding: 60px 20px;
+                    background: #ffffff;
+                    text-align: center;
+                    border-top: 1px solid #f0f0f0;
+                    animation: slideDown 0.5s ease;
+                }
+                
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .lab-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    gap: 30px;
+                    max-width: 1200px;
+                    margin: 40px auto;
+                    padding: 20px;
+                }
+
+                .lab-item {
+                    position: relative;
+                    padding: 25px 15px;
+                    background: #fff;
+                    cursor: pointer;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    text-decoration: none;
+                    color: inherit;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                /* Hexagonal Border Effect */
+                .lab-item::before {
+                    content: "";
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    border: 2px solid #e5e7eb;
+                    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+                    transition: all 0.4s ease;
+                    z-index: 1;
+                }
+
+                .lab-item:hover::before {
+                    border-color: #6366f1;
+                    transform: scale(1.1);
+                    background: rgba(99, 102, 241, 0.03);
+                }
+
+                .lab-item i {
+                    font-size: 2.5rem;
+                    margin-bottom: 12px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item p {
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin: 0;
+                    color: #374151;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item span {
+                    font-size: 0.7rem;
+                    color: #9ca3af;
+                    margin-top: 4px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .clickable-card {
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .clickable-card:hover {
+                    border-color: #6366f1;
+                    background: rgba(99, 102, 241, 0.05);
+                }
+                .user-welcome-bar {
+    background: white;
+    max-width: 1000px;
+    margin: -30px auto 40px; /* Hero-kku mela konjam overlap aagura maari */
+    padding: 20px 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
+}
+
+.welcome-text {
+    font-size: 1.1rem;
+    color: #1e1e2f;
+}
+
+.welcome-text i {
+    margin-right: 10px;
+    color: #6366f1;
+}
+
+.stats-group {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: right;
+}
+
+.stat-item .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-item .value {
+    font-weight: 700;
+    color: #1e1e2f;
+}
+
+.stat-item .value-score {
+    font-weight: 700;
+    color: #10b981; /* Green color for score */
+}
+@media (max-width: 768px) {
+    nav {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important; /* Starts from left to fit more */
+        gap: 4px !important; /* Gap innum kammi panniruken */
+        padding: 10px 2px !important;
+        overflow-x: auto; /* Buttons romba adhigama irundha scroll aagum, cut aagadhu */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    nav a, nav li a, .btn-signup {
+        font-size: 9px !important; /* Slightly smaller to fit everything */
+        padding: 4px 5px !important;
+        letter-spacing: -0.5px !important; /* Tight letter spacing neenga ketta maadhiri */
+        white-space: nowrap !important;
+        display: inline-block !important;
+    }
+
+    /* Signup Button Fix - Making it visible */
+    .btn-signup {
+        background: #00d2ff !important;
+        color: #1a1a2e !important;
+        font-weight: 700 !important;
+        border-radius: 4px !important;
+        margin-left: 2px !important;
+    }
+
+    /* Removing icons on mobile to save space if needed */
+    nav i {
+        display: none !important; 
+    }
+}
+/* Meta AI Style Floating Button */
+#ai-toggle {
+    position: fixed;
+    right: 25px;
+    bottom: 30px;
+    /* Meta AI signature gradient */
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border: none;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: white;
+    /* Soft glowing shadow like Meta AI */
+    box-shadow: 0 10px 25px rgba(79, 172, 254, 0.5);
+    z-index: 10000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ai-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 15px 35px rgba(79, 172, 254, 0.7);
+}
+
+/* Chat Window - Adding Glassmorphism (Premium Look) */
+#ai-window {
+    display: none;
+    position: fixed;
+    right: 25px;
+    bottom: 110px;
+    width: 380px;
+    height: 520px;
+    background: rgba(255, 255, 255, 0.95);
+    /* Glass effect */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    z-index: 9999;
+    overflow: hidden;
+    flex-direction: column;
+    animation: metaPop 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes metaPop {
+    from { opacity: 0; transform: translateY(30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header Design like WhatsApp/Meta */
+.ai-header {
+    background: #1e1e2f;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.online-dot {
+    width: 10px;
+    height: 10px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+}
+/* Make the chat window wider */
+.chat-window {
+    width: 400px !important; /* Increased from 300px */
+    height: 500px !important;
+}
+
+/* Style the markdown points */
+.markdown-body {
+    font-size: 1rem; /* Slightly bigger text */
+    line-height: 1.6; /* More space between lines */
+}
+
+.markdown-body ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-body li {
+    margin-bottom: 8px; /* Space between each bullet point */
+}
+
+.markdown-body strong {
+    color: #1e293b;
+    display: inline-block;
+    margin-top: 5px;
+}
+.ai-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+.ai-content li {
+    margin-bottom: 8px;
+}
+.ai-content strong {
+    display: block;
+    margin-top: 10px;
+}
+/* Glassmorphism Effect for Chat Window */
+#ai-window {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* User Bubble Gradient */
+.user-content {
+    background: linear-gradient(135th, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Clear Button Style */
+.clear-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+            </style>
+        </head>
+        <body>
+
+        <header class="navbar">
+            <div class="logo"><img src="/static/logo.png" alt="AI Learning Path" style="height:48px; vertical-align:middle;"> <span style="font-size:1rem; font-weight:700; color:#00d2ff; letter-spacing:1px; vertical-align:middle; font-family:Poppins,sans-serif;">AI LEARNING PATH</span></div>
+            <nav>
+    <a href="{% url 'home_view' %}">Home</a>
+
+    <a href="{% url 'dashboard_view' %}"><i class="fas fa-columns"></i> Dashboard</a>
+    <a href="#features">Features</a>
+    
+    <a href="{% url 'login' %}">Login</a> 
+    <li class="nav-item">
+    <a href="{% url 'logout_view' %}" class="nav-link" style="color: #ff4d4d;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</li>
+    <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
+    
+</nav>

@@ -280,7 +280,7 @@ footer {
 /* Styling for Feature Icons */
 .feature-card i {
     font-size: 40px;
-    color: #00d4ff;
+    color: #38bdf8;
     margin-bottom: 15px;
     display: block;
 }
@@ -557,3 +557,306 @@ footer {
 
 
 
+/* --- OTP & Password Reset Specific Styling --- */
+
+/* Success/Error Message Styling */
+.messages {
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.messages .error {
+    background: #ffeef0;
+    color: #d9534f;
+    border: 1px solid #d9534f;
+}
+
+.messages .success {
+    background: #e6fffa;
+    color: #2c7a7b;
+    border: 1px solid #2c7a7b;
+}
+
+/* Specific styling for OTP input to make it look 'Techy' */
+input[name="otp"] {
+    letter-spacing: 15px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #00d4ff;
+    border: 2px dashed #00d4ff !important;
+}
+
+/* Helper text below labels */
+.input-group small {
+    display: block;
+    margin-top: 5px;
+    color: #888;
+    font-size: 12px;
+}
+
+/* Animation for the card appearance */
+.auth-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Back to login link styling */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 13px;
+    transition: 0.3s;
+}
+
+.back-link:hover {
+    color: #00d4ff;
+}
+/* Navbar alignment fix */
+nav {
+    display: flex;
+    align-items: center; /* Ellathaivum center-la vaikkum */
+    gap: 15px;
+}
+
+.nav-link-logout {
+    color: #ff4d4d !important;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.nav-link-logout i {
+    margin-right: 5px;
+}
+/* ==========================================================================
+   GLOBAL RESPONSIVENESS AND SMOOTH TRANSITIONS
+   ========================================================================== */
+
+/* Universal Smooth Transition for layout shifts and interactions */
+body, nav, .navbar, .hero, .auth-card, .feature-card, .dashboard-grid, .glass-card, aside, main, .input-group input, .auth-btn, .users li, .how-it-works li {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+    box-sizing: border-box; 
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* Stops horizontal scrolling */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   DESKTOP & LARGE LAPTOPS (Min-width: 1025px)
+   ========================================================================== */
+@media screen and (min-width: 1025px) {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr 320px;
+        gap: 30px;
+        padding: 20px 40px;
+    }
+}
+
+/* ==========================================================================
+   SMALL LAPTOPS & TABLETS LANDSCAPE (Max-width: 1024px)
+   ========================================================================== */
+@media screen and (max-width: 1024px) {
+    /* Navbar Scaling */
+    .navbar {
+        padding: 15px 30px;
+    }
+    
+    .hero {
+        padding: 80px 20px;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .users ul {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 240px 1fr; /* Drop Right Sidebar to bottom or hide */
+        gap: 20px;
+        padding: 20px;
+    }
+}
+
+/* ==========================================================================
+   TABLETS PORTRAIT & LARGE PHONES (Max-width: 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    /* Navbar Adjustment */
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        text-align: center;
+    }
+    
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navbar .logo {
+        font-size: 1.2rem;
+    }
+
+    .hero h1 {
+        font-size: 28px !important;
+        line-height: 1.3;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .features, .how-it-works, .users {
+        padding: 50px 20px;
+    }
+
+    /* Auth Forms Adjustment */
+    .auth-container {
+        padding: 40px 15px;
+    }
+
+    .auth-card {
+        padding: 30px 20px;
+    }
+
+    /* Dashboard Stack Layout */
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .glass-card, aside, main {
+        width: 100% !important;
+        margin: 0;
+    }
+
+    .analysis-grid {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .mini-stat {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .roadmap-step {
+        padding: 15px;
+        font-size: 14px;
+    }
+}
+
+/* ==========================================================================
+   MOBILE DEVICES (Max-width: 480px)
+   ========================================================================== */
+@media screen and (max-width: 480px) {
+    /* Tighter Spacing for small screens */
+    .navbar {
+        padding: 10px;
+    }
+
+    .navbar .logo img {
+        height: 35px !important; /* Scale logo image down */
+    }
+
+    .navbar .logo span {
+        font-size: 0.85rem !important;
+    }
+
+    nav a.btn-signup {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    nav a {
+        margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .hero h1 {
+        font-size: 22px !important;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .primary-btn, .secondary-btn {
+        width: 100%;
+        margin: 5px 0; /* Stack buttons vertically */
+    }
+
+    .how-it-works li {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    /* Center align the flow elements */
+    .how-it-works ol::before {
+        display: none; /* Hide vertical line on very small screens to save space */
+    }
+    
+    .how-it-works li::before {
+        position: static;
+        margin: 0 auto 15px auto;
+        transform: none;
+    }
+
+    .how-it-works li {
+        text-align: center;
+        padding-left: 20px;
+    }
+
+    .auth-card h2 {
+        font-size: 22px;
+    }
+    
+    .input-group input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .auth-btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+}

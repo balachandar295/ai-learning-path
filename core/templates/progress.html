@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Mastery Dashboard | AI Learning Path</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    {% load static %}
+    <style>
+        /* --- Premium Light Theme Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f4f7fb; color: #333; line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Navbar --- */
+        .navbar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 60px; background: #1e1e2f; 
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo { font-size: 22px; font-weight: 700; color: #00d4ff; text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 30px; }
+        .nav-links a { color: #fff; text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 15px; }
+        .nav-links a:hover { color: #00d4ff; }
+        .btn-logout { color: #ff4d4d !important; font-weight: bold; }
+
+        /* --- Dashboard Header --- */
+        .hero {
+            padding: 80px 20px 140px; text-align: center;
+            background: linear-gradient(135deg, #00d4ff, #1e1e2f);
+            color: #fff;
+        }
+        .hero h1 { font-size: 40px; font-weight: 700; margin-bottom: 15px; color: #fff; }
+        .hero p { font-size: 18px; max-width: 700px; margin: auto; opacity: 0.9; }
+
+        .container { max-width: 1400px; margin: -100px auto 100px; padding: 0 40px; }
+
+        /* --- Overall Status Bar --- */
+        .overall-status {
+            background: #ffffff; padding: 40px; border-radius: 20px; 
+            display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 40px; align-items: center;
+            margin-bottom: 60px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative; overflow: hidden;
+        }
+        .overall-status::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, #00d4ff, #6c63ff);
+        }
+        
+        .mastery-score { text-align: center; }
+        .mastery-score h2 { font-size: 50px; color: #1e1e2f; margin: 0; font-weight: 700; }
+        .mastery-score p { color: #64748b; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; font-weight: 600; }
+
+        .progress-meter { width: 100%; }
+        .meter-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 600; color: #1e1e2f; }
+        .meter-bg { width: 100%; height: 14px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
+        .meter-fill { height: 100%; background: linear-gradient(90deg, #00d4ff, #6c63ff); border-radius: 20px; transition: 1.5s ease; }
+
+        /* --- Category Cards --- */
+        .category-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .category-card {
+            background: #ffffff; padding: 35px; border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); transition: 0.4s;
+            text-align: center; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .category-card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, #00d4ff, #6c63ff);
+        }
+        .category-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        
+        /* Circular Progress Styling */
+        .circle-wrap { width: 120px; height: 120px; margin: 0 auto 20px; position: relative; }
+        .circle-bg { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: conic-gradient(#00d4ff 0deg, #e2e8f0 0deg); 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .circle-inner { width: 100px; height: 100px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #1e1e2f; }
+
+        .category-card h3 { font-size: 20px; margin-bottom: 8px; color: #1e1e2f; font-weight: 600; }
+        .category-card p { font-size: 13px; color: #64748b; }
+
+        /* --- Topic Detailed List --- */
+        .detailed-section {
+            background: #ffffff; padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 50px;
+        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .section-header h2 { font-size: 24px; color: #1e1e2f; font-weight: 600; }
+
+        .topic-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .topic-item {
+            background: #f8fafc; padding: 20px; border-radius: 15px;
+            display: flex; align-items: center; gap: 15px; border-left: 5px solid #e2e8f0;
+            transition: 0.3s;
+        }
+        .topic-item.completed { border-left-color: #10b981; background: #f0fdf4; }
+        .topic-item.in-progress { border-left-color: #00d4ff; background: #f0f9ff; }
+
+        .topic-icon { width: 40px; height: 40px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #00d4ff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .topic-details h4 { font-size: 15px; margin-bottom: 4px; color: #1e1e2f; font-weight: 600; }
+        .topic-details span { font-size: 12px; color: #64748b; }
+
+        .ai-insight {
+            margin-top: 60px; padding: 30px; background: #1e1e2f;
+            border-radius: 20px; border-left: 6px solid #f59e0b; display: flex; gap: 20px; align-items: center; color: #fff;
+        }
+        .ai-insight i { font-size: 30px; color: #f59e0b; }
+        .ai-insight div h3 { font-size: 18px; color: #fff; margin-bottom: 5px; }
+        .ai-insight div p { color: #cbd5e1; font-size: 14px; }
+
+        footer { text-align: center; padding: 60px 20px; color: #64748b; font-size: 14px; border-top: 1px solid #e2e8f0; background: #f8fafc; margin-top: 80px; }
+
+        @media (max-width: 900px) {
+            .overall-status { grid-template-columns: 1fr; }
+            .container { padding: 0 20px; }
+            .hero h1 { font-size: 30px; }
+            .navbar { padding: 20px; }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <nav class="navbar" style="padding: 5px 60px; height: auto;">
+        <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <div class="nav-links">
+            <a href="/dashboard/">Dashboard</a>
+            <a href="{% url 'aptitude_categories' %}">Aptitude</a>
+            <a href="{% url 'progress_view' %}">Progress</a>
+            <a href="/logout/" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Learning Analytics</h1>
+        <p>Track your mastery across all aptitude domains with real-time data driven by AI and storage sync.</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Overall Stat Bar -->
+        <div class="overall-status">
+            <div class="mastery-score">
+                <h2 id="mastery-pct">0%</h2>
+                <p>Overall Mastery</p>
+            </div>
+            <div class="progress-meter">
+                <div class="meter-label">
+                    <span>Aptitude Completion</span>
+                    <span id="completed-fraction">0 / 108 Topics</span>
+                </div>
+                <div class="meter-bg">
+                    <div id="mastery-fill" class="meter-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="mastery-score" style="border-left: 1px solid rgba(255,255,255,0.1);">
+                <h2 id="rank-label">Beginner</h2>
+                <p>Current Rank</p>
+            </div>
+        </div>
+
+        <!-- Category Grid -->
+        <div class="category-grid" id="category-grid">
+            <!-- Rendered by JS -->
+        </div>
+
+        <div class="detailed-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list-check" style="margin-right: 12px; color: #38bdf8;"></i> Topic-wise Breakdown</h2>
+                <select id="category-filter" style="background:#1e293b; color:#fff; border:1px solid #334155; padding:8px 15px; border-radius:10px;">
+                    <option value="all">All Categories</option>
+                    <option value="Arithmetic">Arithmetic</option>
+                    <option value="Logical Reasoning">Logical Reasoning</option>
+                    <option value="Data Interpretation">Data Interpretation</option>
+                    <option value="Verbal Reasoning">Verbal Reasoning</option>
+                    <option value="Non-Verbal Reasoning">Non-Verbal Reasoning</option>
+                    <option value="Arithmetic Puzzles">Puzzles</option>
+                </select>
+            </div>
+            <div class="topic-list" id="topic-list">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+
+        <div class="ai-insight">
+            <i class="fas fa-robot"></i>
+            <div>
+                <h3>AI Recommendation</h3>
+                <p id="ai-message">Loading intelligence report based on your performance...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 AI LEARNING PATH Mastery Platform. All rights reserved.</p>
+    </footer>
+
+    <script src="{% static 'data.js' %}"></script>
+    <script>
+        const categories = {
+            "Arithmetic": [
+                "simplification", "number_system", "lcm_hcf", "averages", "percentages", "ratio_proportion",
+                "profit_loss", "si_ci", "time_work", "time_distance", "ages", "partnership",
+                "pc", "probability", "mensuration", "alligation", "trains", "boats_streams"
+            ],
+            "Logical Reasoning": [
+                "number_series", "alphabet_series", "alphanumeric_series", "coding_decoding", "blood_relations", "direction_sense",
+                "syllogism", "venn_diagrams", "order_ranking", "linear_seating", "circular_seating", "statement_conclusion",
+                "logical_puzzles", "data_sufficiency", "input_output", "critical_reasoning", "statement_assumption", "analytical_reasoning"
+            ],
+            "Data Interpretation": [
+                "tabular_di", "bar_graph", "pie_chart", "line_graph", "simple_caselet", "percentage_di",
+                "multiple_bar_graph", "multiple_pie_chart", "mixed_graph", "ratio_di", "average_di", "data_comparison",
+                "complex_caselet", "missing_data", "arithmetic_di", "data_sufficiency_di", "logical_di", "advanced_mixed_di"
+            ],
+            "Verbal Reasoning": [
+                "spotting_errors", "synonyms", "antonyms", "spellings", "selecting_words", "one_word_substitution",
+                "sentence_formation", "sentence_correction", "sentence_improvement", "completing_statements", "ordering_words", "ordering_sentences",
+                "paragraph_formation", "cloze_test", "reading_comprehension", "idioms_phrases", "change_of_voice", "change_of_speech"
+            ],
+            "Non-Verbal Reasoning": [
+                "nv_series", "nv_analogy", "nv_classification", "nv_mirror_images", "nv_water_images", "nv_embedded_images",
+                "nv_figure_matrix", "nv_pattern_completion", "nv_paper_folding", "nv_paper_cutting", "nv_grouping_images", "nv_shape_construction",
+                "nv_cubes_dice", "nv_analytical_reasoning", "nv_rule_detection", "nv_dot_situation", "nv_image_analysis", "nv_figure_matrix_problems"
+            ],
+            "Arithmetic Puzzles": [
+                "sudoku", "number_puzzles", "missing_letters", "picture_puzzles", "pattern_puzzles", "odd_figure",
+                "clock_puzzles", "calendar_puzzles", "math_puzzles", "dice_puzzles", "matchstick_puzzles", "grid_puzzles",
+                "sequence_puzzles", "arrangement_puzzles", "symbol_puzzles", "cross_number", "brain_teasers", "logical_puzzles_puzzle" // Added puzzle specific logical puzzle key if separate
+            ]
+        };
+
+        // Fix for logical_puzzles being in both - but users might treat them as one. 
+        // We'll ensure Puzzles has 18 distinct items if needed. Let's stick to the 18 provided in puzzle_topics.html.
+        const puzzle_keys = [
+            'sudoku', 'number_puzzles', 'missing_letters', 'picture_puzzles', 'pattern_puzzles', 'odd_figure',
+            'logical_puzzles', 'clock_puzzles', 'calendar_puzzles', 'math_puzzles', 'dice_puzzles', 'matchstick_puzzles',
+            'grid_puzzles', 'sequence_puzzles', 'arrangement_puzzles', 'symbol_puzzles', 'cross_number', 'brain_teasers'
+        ];
+        categories["Arithmetic Puzzles"] = puzzle_keys;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('category-grid');
+            const topicList = document.getElementById('topic-list');
+            const filter = document.getElementById('category-filter');
+
+            let totalCompleted = 0;
+            let totalTopicsCount = 0;
+
+            const updateDashboard = () => {
+                grid.innerHTML = '';
+                topicList.innerHTML = '';
+                totalCompleted = 0;
+                totalTopicsCount = 0;
+
+                for (const cat in categories) {
+                    const topics = categories[cat];
+                    let catCompleted = 0;
+                    let catTotal = topics.length;
+                    
+                    topics.forEach(key => {
+                        const progress = parseInt(localStorage.getItem('aptitude_progress_' + key)) || 0;
+                        if (progress >= 100) {
+                            catCompleted++;
+                            totalCompleted++;
+                        }
+                        totalTopicsCount++;
+                        
+                        // Add to detailed list if filter matches
+                        if (filter.value === 'all' || filter.value === cat) {
+                            const item = document.createElement('div');
+                            item.className = `topic-item ${progress >= 100 ? 'completed' : (progress > 0 ? 'in-progress' : '')}`;
+                            item.innerHTML = `
+                                <div class="topic-icon"><i class="fas fa-book-open"></i></div>
+                                <div class="topic-details">
+                                    <h4>${topicsData[key]?.title || key}</h4>
+                                    <span>${progress}% Complete</span>
+                                </div>
+                            `;
+                            topicList.appendChild(item);
+                        }
+                    });
+
+                    const catPct = Math.round((catCompleted / catTotal) * 100);
+                    const deg = Math.round(catPct * 3.6);
+
+                    const card = document.createElement('div');
+                    card.className = 'category-card';
+                    card.onclick = () => { filter.value = cat; updateDashboard(); };
+                    card.innerHTML = `
+                        <div class="circle-wrap">
+                            <div class="circle-bg" style="background: conic-gradient(#00d4ff ${deg}deg, #e2e8f0 ${deg}deg)">
+                                <div class="circle-inner">${catPct}%</div>
+                            </div>
+                        </div>
+                        <h3>${cat}</h3>
+                        <p>${catCompleted} / ${catTotal} Completed</p>
+                    `;
+                    grid.appendChild(card);
+                }
+
+                const overallPct = Math.round((totalCompleted / totalTopicsCount) * 100);
+                document.getElementById('mastery-pct').innerText = overallPct + "%";
+                document.getElementById('mastery-fill').style.width = overallPct + "%";
+                document.getElementById('completed-fraction').innerText = `${totalCompleted} / ${totalTopicsCount} Topics`;
+
+                // Rank calculation
+                let rank = "Beginner";
+                if (overallPct > 80) rank = "Grandmaster";
+                else if (overallPct > 60) rank = "Expert";
+                else if (overallPct > 40) rank = "Proficient";
+                else if (overallPct > 20) rank = "Learner";
+                document.getElementById('rank-label').innerText = rank;
+
+                // AI Insight
+                let msg = "Welcome to your mastery dashboard. Focus on Arithmetic fundamentals to build a strong base.";
+                if (overallPct > 0) msg = "Great start! You're making progress. Try diversifying your study into Puzzles to sharpen lateral thinking.";
+                if (overallPct > 50) msg = "Impressive consistency! Your Data Interpretation skills are growing. Focus on Advanced Logical Reasoning for a competitive edge.";
+                if (overallPct > 90) msg = "Near mastery achieved. Refine your speed in Verbal Reasoning to maximize your scoring potential.";
+                document.getElementById('ai-message').innerText = msg;
+            };
+
+            filter.onchange = updateDashboard;
+            updateDashboard();
+        });
+    </script>
+{% include 'ai_bot.html' %}
+{% include 'ai_bot.html' %}
+</body>
+</html>

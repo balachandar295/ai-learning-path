@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Certificate | AI Learning Path</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Great+Vibes&family=Playfair+Display:ital,wght@1,700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface: #1e293b;
+            --primary: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00e5ff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cert-wrapper {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white; /* Fallback */
+            width: 800px; /* Fixed width for consistent generation */
+            height: 565px; /* Adjust based on your PNG aspect ratio (e.g. A4 landscape) */
+        }
+
+        .cert-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 
+           This mask div is placed over where "Akshay" was. 
+           You may need to adjust top/left/width/height percentages based on the exact image.
+        */
+        .name-mask {
+            position: absolute;
+            top: 45%;      /* Adjusted to cover the bottom of the original text perfectly */
+            left: 20%;     
+            width: 60%;    
+            height: 12%;   /* Increased height to hide the black artifact below the text */
+            background-color: #ffffff; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .user-name {
+            font-family: 'Playfair Display', serif; /* Changed font to a more readable, elegant serif */
+            font-style: italic;
+            font-size: 3.5rem; 
+            color: #1e293b; 
+            font-weight: 700;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .actions {
+            margin-top: 20px;
+            margin-bottom: 50px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .celebration {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .celebration h1 {
+            color: #00e5ff;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .celebration p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Adjustments for smaller screens */
+        @media (max-width: 850px) {
+            .cert-wrapper {
+                width: 95vw;
+                height: calc(95vw * 0.707); /* A4 aspect ratio approx */
+            }
+            .user-name {
+                font-size: 8vw;
+            }
+        }
+    </style>
+
+    <!-- html2canvas library for downloading the div as an image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <header class="header">
+        <a href="{% url 'home_view' %}" class="logo">
+            <i class="fas fa-brain"></i> AI LEARNING PATH
+        </a>
+        <a href="{% url 'skill_tests_hub' %}" class="btn btn-secondary">Back to Hub</a>
+    </header>
+
+    <div class="celebration">
+        <h1>Congratulations! 🎉</h1>
+        <p>You have successfully completed the <strong>{{ category|title }}</strong> assessment with a score of <strong>{{ score }}</strong>.</p>
+    </div>
+
+    <!-- The actual certificate container that will be captured -->
+    <div class="cert-wrapper" id="certificate-node">
+        <!-- Make sure the image path matches what you saved -->
+        <img src="{% static 'certificate_template.png' %}" alt="Certificate Background" class="cert-img" crossorigin="anonymous">
+        
+        <!-- Mask and Name Overlay -->
+        <div class="name-mask" id="mask-box">
+            <!-- Dynamic name. If user has no first_name, fallback to username. If not logged in, fallback to Guest -->
+            <h2 class="user-name">
+                {% if request.user.is_authenticated %}
+                    {{ request.user.first_name|default:request.user.username|title }}
+                {% else %}
+                    Guest User
+                {% endif %}
+            </h2>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-primary" onclick="downloadCertificate()">
+            <i class="fas fa-download"></i> Download Certificate
+        </button>
+        <a href="{% url 'skill_tests_hub' %}" class="btn btn-secondary">
+            Take Another Test
+        </a>
+    </div>
+
+    <script>
+        function downloadCertificate() {
+            const certNode = document.getElementById('certificate-node');
+            const originalBoxShadow = certNode.style.boxShadow;
+            
+            // Remove box shadow temporarily for a clean download
+            certNode.style.boxShadow = 'none';
+
+            // Use html2canvas to render the div into an image
+            html2canvas(certNode, {
+                scale: 2, // High resolution
+                useCORS: true, // Needed if image is hosted externally
+                backgroundColor: null // Transparent background
+            }).then(canvas => {
+                // Restore box shadow
+                certNode.style.boxShadow = originalBoxShadow;
+
+                // Create a temporary link to download
+                const link = document.createElement('a');
+                link.download = 'AI_Learning_Path_Certificate.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Error generating certificate: ", err);
+                alert("There was an error generating your download. Please try again.");
+                certNode.style.boxShadow = originalBoxShadow;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ role.name }} Roadmap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            color: #1e293b;
+        }
+
+        .header-section {
+            background: #1e1e2f;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid #00d2ff;
+            position: relative;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            color: #00d2ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(0, 210, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #00d2ff;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #00d2ff;
+            color: #1e1e2f;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .roadmap-container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* Timeline vertical line */
+        .roadmap-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #cbd5e1;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .phase-step {
+            position: relative;
+            width: 50%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            z-index: 1;
+            margin-bottom: 30px;
+        }
+
+        .phase-step:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .phase-step:nth-child(even) {
+            left: 50%;
+            text-align: left;
+        }
+
+        /* The circle on the timeline */
+        .phase-step::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border: 4px solid #06b6d4;
+            border-radius: 50%;
+            top: 30px;
+            z-index: 2;
+        }
+
+        .phase-step:nth-child(odd)::after {
+            right: -16px;
+        }
+
+        .phase-step:nth-child(even)::after {
+            left: -16px;
+        }
+
+        .phase-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-top: 5px solid #06b6d4;
+            transition: transform 0.3s ease;
+        }
+
+        .phase-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .phase-card h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 1.4rem;
+        }
+
+        .phase-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: inherit; /* aligns with text-align */
+        }
+
+        .tag {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .roadmap-container::before {
+                left: 30px;
+            }
+            .phase-step {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 70px;
+                padding-right: 0;
+                text-align: left !important;
+            }
+            .phase-step::after {
+                left: 14px !important;
+            }
+            .tech-tags {
+                justify-content: flex-start !important;
+            }
+        }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <section class="header-section">
+        <a href="{% url 'developer_roles' %}" class="back-link"><i class="fas fa-arrow-left"></i> Roles</a>
+        <div style="margin-bottom: 20px;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:80px; width:80px; object-fit:contain; margin-bottom:15px;">
+            <h2 style="font-size:2rem; font-weight:800; color:#00d2ff; letter-spacing:1px; text-shadow:0 0 15px rgba(0,210,255,0.3); font-family:Poppins,sans-serif; margin:0;">AI LEARNING PATH</h2>
+        </div>
+        <h1>{{ role.name }} Roadmap</h1>
+        <p>Your step-by-step master plan to cracking the {{ role.name }} role.</p>
+    </section>
+
+    <div class="roadmap-container">
+        
+        {% for phase in phases %}
+        <div class="phase-step">
+            <div class="phase-card">
+                <h3>Phase {{ forloop.counter }}: {{ phase.title }}</h3>
+                <div class="tech-tags" style="margin-top: 15px;">
+                    {% for item in phase.topics %}
+                    <span class="tag"><i class="fas fa-check-circle" style="margin-right: 5px; opacity: 0.7;"></i>{{ item }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+</body>
+</html>

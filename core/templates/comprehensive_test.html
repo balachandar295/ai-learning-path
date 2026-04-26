@@ -1,0 +1,1362 @@
+        {% load static %}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AI-Assisted Learning Path Generator</title>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <link rel="stylesheet" href="{% static 'basic.css' %}">
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+            <style>
+                /* Premium Lab Grid Styling - Hexagonal Track Design */
+                .lab-container {
+                    display: none;
+                    padding: 60px 20px;
+                    background: #ffffff;
+                    text-align: center;
+                    border-top: 1px solid #f0f0f0;
+                    animation: slideDown 0.5s ease;
+                }
+                
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .lab-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                    gap: 30px;
+                    max-width: 1200px;
+                    margin: 40px auto;
+                    padding: 20px;
+                }
+
+                .lab-item {
+                    position: relative;
+                    padding: 25px 15px;
+                    background: #fff;
+                    cursor: pointer;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    text-decoration: none;
+                    color: inherit;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                /* Hexagonal Border Effect */
+                .lab-item::before {
+                    content: "";
+                    position: absolute;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    border: 2px solid #e5e7eb;
+                    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+                    transition: all 0.4s ease;
+                    z-index: 1;
+                }
+
+                .lab-item:hover::before {
+                    border-color: #6366f1;
+                    transform: scale(1.1);
+                    background: rgba(99, 102, 241, 0.03);
+                }
+
+                .lab-item i {
+                    font-size: 2.5rem;
+                    margin-bottom: 12px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item p {
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    margin: 0;
+                    color: #374151;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .lab-item span {
+                    font-size: 0.7rem;
+                    color: #9ca3af;
+                    margin-top: 4px;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .clickable-card {
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .clickable-card:hover {
+                    border-color: #6366f1;
+                    background: rgba(99, 102, 241, 0.05);
+                }
+                .user-welcome-bar {
+    background: white;
+    max-width: 1000px;
+    margin: -30px auto 40px; /* Hero-kku mela konjam overlap aagura maari */
+    padding: 20px 40px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
+}
+
+.welcome-text {
+    font-size: 1.1rem;
+    color: #1e1e2f;
+}
+
+.welcome-text i {
+    margin-right: 10px;
+    color: #6366f1;
+}
+
+.stats-group {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: right;
+}
+
+.stat-item .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-item .value {
+    font-weight: 700;
+    color: #1e1e2f;
+}
+
+.stat-item .value-score {
+    font-weight: 700;
+    color: #10b981; /* Green color for score */
+}
+@media (max-width: 768px) {
+    nav {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important; /* Starts from left to fit more */
+        gap: 4px !important; /* Gap innum kammi panniruken */
+        padding: 10px 2px !important;
+        overflow-x: auto; /* Buttons romba adhigama irundha scroll aagum, cut aagadhu */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    nav a, nav li a, .btn-signup {
+        font-size: 9px !important; /* Slightly smaller to fit everything */
+        padding: 4px 5px !important;
+        letter-spacing: -0.5px !important; /* Tight letter spacing neenga ketta maadhiri */
+        white-space: nowrap !important;
+        display: inline-block !important;
+    }
+
+    /* Signup Button Fix - Making it visible */
+    .btn-signup {
+        background: #00d2ff !important;
+        color: #1a1a2e !important;
+        font-weight: 700 !important;
+        border-radius: 4px !important;
+        margin-left: 2px !important;
+    }
+
+    /* Removing icons on mobile to save space if needed */
+    nav i {
+        display: none !important; 
+    }
+}
+/* Meta AI Style Floating Button */
+#ai-toggle {
+    position: fixed;
+    right: 25px;
+    bottom: 30px;
+    /* Meta AI signature gradient */
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border: none;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: white;
+    /* Soft glowing shadow like Meta AI */
+    box-shadow: 0 10px 25px rgba(79, 172, 254, 0.5);
+    z-index: 10000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ai-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 15px 35px rgba(79, 172, 254, 0.7);
+}
+
+/* Chat Window - Adding Glassmorphism (Premium Look) */
+#ai-window {
+    display: none;
+    position: fixed;
+    right: 25px;
+    bottom: 110px;
+    width: 380px;
+    height: 520px;
+    background: rgba(255, 255, 255, 0.95);
+    /* Glass effect */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    z-index: 9999;
+    overflow: hidden;
+    flex-direction: column;
+    animation: metaPop 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes metaPop {
+    from { opacity: 0; transform: translateY(30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header Design like WhatsApp/Meta */
+.ai-header {
+    background: #1e1e2f;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.online-dot {
+    width: 10px;
+    height: 10px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+}
+/* Make the chat window wider */
+.chat-window {
+    width: 400px !important; /* Increased from 300px */
+    height: 500px !important;
+}
+
+/* Style the markdown points */
+.markdown-body {
+    font-size: 1rem; /* Slightly bigger text */
+    line-height: 1.6; /* More space between lines */
+}
+
+.markdown-body ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-body li {
+    margin-bottom: 8px; /* Space between each bullet point */
+}
+
+.markdown-body strong {
+    color: #1e293b;
+    display: inline-block;
+    margin-top: 5px;
+}
+.ai-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+.ai-content li {
+    margin-bottom: 8px;
+}
+.ai-content strong {
+    display: block;
+    margin-top: 10px;
+}
+/* Glassmorphism Effect for Chat Window */
+#ai-window {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* User Bubble Gradient */
+.user-content {
+    background: linear-gradient(135th, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Clear Button Style */
+.clear-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+            </style>
+        </head>
+        <body>
+
+        <header class="navbar" style="padding: 5px 60px; height: auto;">
+            <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+                <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+                <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+            </a>
+            <nav>
+    <a href="{% url 'home_view' %}">Home</a>
+    <a href="{% url 'dashboard_view' %}"><i class="fas fa-columns"></i> Dashboard</a>
+    <a href="{% url 'logout_view' %}" class="nav-link" style="color: #ff4d4d;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</nav>
+        </header>
+
+<style>
+body { background-color: #f4f7fb; }
+</style>
+
+{% load static %}
+
+
+<style>
+    .test-header {
+        background: white;
+        padding: 15px 40px;
+        position: sticky;
+        top: 60px; /* Below navbar */
+        z-index: 90;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .timer {
+        font-family: monospace;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #ef4444;
+        background: #fee2e2;
+        padding: 8px 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .test-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        color: #1e293b;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #3b82f6;
+        display: inline-block;
+    }
+    
+    .q-card {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        border: 1px solid #e2e8f0;
+    }
+    
+    .q-text {
+        font-size: 1.1rem;
+        color: #1e293b;
+        font-weight: 600;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+    
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .option-label {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 1rem;
+        color: #475569;
+    }
+    
+    .option-label:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+    
+    .option-label input {
+        margin-right: 15px;
+        transform: scale(1.2);
+    }
+    
+    .coding-block textarea {
+        width: 100%;
+        height: 250px;
+        background: #1e1e2f;
+        color: #e2e8f0;
+        font-family: monospace;
+        font-size: 1rem;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        resize: vertical;
+        outline: none;
+    }
+    
+    .coding-block textarea:focus {
+        border-color: #3b82f6;
+    }
+
+    .submit-btn {
+        background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+        color: white;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        display: block;
+        margin: 50px auto;
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        transition: transform 0.2s;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    /* One-at-a-time question layout */
+    .q-card { display: none; }
+    .q-card.active { display: block; animation: qFadeIn 0.3s ease; }
+    @keyframes qFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Navigation bar */
+    .q-nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 20px 0 10px;
+        gap: 12px;
+    }
+    .q-nav-btn {
+        background: white;
+        border: 2px solid #e2e8f0;
+        color: #475569;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    .q-nav-btn:hover:not(:disabled) {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        transform: translateY(-1px);
+    }
+    .q-nav-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+    .q-nav-progress {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #64748b;
+        background: #f1f5f9;
+        padding: 8px 18px;
+        border-radius: 8px;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="test-header">
+    <div>
+        <h2 style="margin:0; font-size: 1.5rem; color:#1e293b;">{{ category_display }} Comprehensive Assessment</h2>
+        <p style="margin:0; color:#64748b; font-size: 0.9rem;">40 Questions • Do not close this tab</p>
+    </div>
+    <div class="timer">
+        <i class="fas fa-stopwatch"></i> <span id="time-display">45:00</span>
+    </div>
+</div>
+
+<form id="assessment-form" method="POST" action="{% url 'submit_comprehensive_test' %}">
+    {% csrf_token %}
+    <input type="hidden" name="category" value="{{ category }}">
+    <input type="hidden" name="total_score" id="total_score" value="0">
+    
+    <div class="test-container">
+
+        <h3 class="section-title">Section 1: Multiple Choice ({{ mcqs|length }} Questions)</h3>
+        
+        {% for q in mcqs %}
+        <div class="q-card" id="mcq_{{ forloop.counter }}">
+            <div class="q-text"><span style="color:#3b82f6; margin-right:8px;">Q{{ forloop.counter }}.</span> 
+                {% if is_aptitude %}{{ q.question_text }}{% else %}{{ q.question_text }}{% endif %}
+            </div>
+            <div class="options">
+                {% for val, text in q.shuffled_options %}
+                    <label class="option-label"><input type="radio" name="q_{{ q.id }}" value="{{ val }}"> {{ text }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not is_aptitude %}
+        <div id="coding-section">
+            <!-- Populated by JS -->
+        </div>
+        {% endif %}
+
+        <div class="q-nav-bar">
+            <button type="button" class="q-nav-btn" id="btn-prev" onclick="navigateQ(-1)" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <span class="q-nav-progress" id="q-progress">Question 1 of {{ mcqs|length }}</span>
+            <button type="button" class="q-nav-btn" id="btn-next" onclick="navigateQ(1)">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-final" style="display:none;" onclick="return confirm('Are you sure you want to submit your assessment?')">Submit Assessment</button>
+    </div>
+</form>
+
+<!-- ── Question Navigation Palette ── -->
+<style>
+    #q-palette {
+        position: fixed;
+        left: 15px;
+        top: 150px;
+        z-index: 8000;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        padding: 18px 14px;
+        width: 240px;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        border: 1px solid #e2e8f0;
+    }
+    #q-palette::-webkit-scrollbar { width: 4px; }
+    #q-palette::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    .palette-header {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        text-align: center;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 8px;
+    }
+
+    .palette-stats {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        padding: 6px 8px;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+    .palette-stats .answered { color: #10b981; }
+    .palette-stats .total    { color: #64748b; }
+
+    .q-num-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .q-num-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .q-num-btn:hover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+        color: #3b82f6;
+        transform: scale(1.08);
+    }
+
+    .q-num-btn.answered {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+
+    .q-num-btn.current {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    .palette-legend {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.68rem;
+        color: #94a3b8;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 10px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot {
+        width: 10px; height: 10px;
+        border-radius: 3px;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 1100px) {
+        #q-palette { display: none; }
+    }
+</style>
+
+<div id="q-palette">
+    <div class="palette-header">📋 Questions</div>
+    <div class="palette-stats">
+        <span class="answered">✅ <span id="answered-count">0</span> Done</span>
+        <span class="total">📝 {{ mcqs|length }} Total</span>
+    </div>
+    <div class="q-num-grid" id="q-num-grid">
+        {% for q in mcqs %}
+        <a class="q-num-btn" id="btn_q{{ q.id }}" href="#mcq_{{ forloop.counter }}" onclick="setCurrentBtn(this)">{{ forloop.counter }}</a>
+        {% endfor %}
+    </div>
+    <div class="palette-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div> Answered</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Current</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e2e8f0;"></div> Not Visited</div>
+    </div>
+</div>
+
+<script>
+    // ── One-at-a-time Q navigation ──
+    var allCards = [];
+    var currentIndex = 0;
+
+    function initPagination() {
+        // Collect ALL cards (MCQs + coding challenges)
+        allCards = Array.from(document.querySelectorAll('.q-card'));
+        if (allCards.length === 0) return;
+
+        // Re-attach palette click handlers just to be safe
+        var btns = document.querySelectorAll('.q-num-btn');
+        btns.forEach(function(btn, i) {
+            // Remove old listeners to avoid duplicates
+            var clone = btn.cloneNode(true);
+            btn.parentNode.replaceChild(clone, btn);
+            clone.addEventListener('click', function(e) {
+                e.preventDefault();
+                showQuestion(i);
+            });
+        });
+
+        // Show only first
+        showQuestion(0);
+        updateTotalCountDisplay();
+    }
+
+    function updateTotalCountDisplay() {
+        var totalSpan = document.querySelector('.palette-stats .total');
+        if (totalSpan) totalSpan.innerText = '📝 ' + allCards.length + ' Total';
+    }
+
+    function showQuestion(idx) {
+        if (idx < 0 || idx >= allCards.length) return;
+
+        // Hide all, show target
+        allCards.forEach(function(c) { c.classList.remove('active'); });
+        allCards[idx].classList.add('active');
+        currentIndex = idx;
+
+        // Scroll to top of test container
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+
+        // Update progress label
+        var prog = document.getElementById('q-progress');
+        if (prog) prog.innerText = 'Question ' + (idx + 1) + ' of ' + allCards.length;
+
+        // Prev / Next buttons
+        var btnPrev = document.getElementById('btn-prev');
+        var btnNext = document.getElementById('btn-next');
+        if (btnPrev) btnPrev.disabled = (idx === 0);
+        if (btnNext) btnNext.disabled = (idx === allCards.length - 1);
+
+        // Show Submit only on last question
+        var submitBtn = document.getElementById('submit-final');
+        if (submitBtn) submitBtn.style.display = (idx === allCards.length - 1) ? 'block' : 'none';
+
+        // Sync palette highlight
+        syncPalette(idx);
+    }
+
+    function navigateQ(dir) {
+        showQuestion(currentIndex + dir);
+    }
+
+    // ── Palette sync ──
+    var currentPaletteBtn = null;
+
+    function syncPalette(idx) {
+        // Remove old current highlight
+        var allBtns = document.querySelectorAll('.q-num-btn');
+        allBtns.forEach(function(b) { b.classList.remove('current'); });
+        
+        // Find the nth palette button
+        if (allBtns[idx]) {
+            allBtns[idx].classList.add('current');
+            currentPaletteBtn = allBtns[idx];
+        }
+    }
+
+    // Palette number click → jump to that question
+    document.addEventListener('DOMContentLoaded', function() {
+        var btns = document.querySelectorAll('.q-num-btn');
+        btns.forEach(function(btn, i) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showQuestion(i);
+            });
+        });
+    });
+
+    // Mark answered when radio is selected
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.type === 'radio') {
+            var name = e.target.name; // e.g. "q_42"
+            var qId  = name.replace('q_', '');
+            var btn  = document.getElementById('btn_q' + qId);
+            if (btn) {
+                btn.classList.add('answered');
+                btn.classList.remove('current');
+                currentPaletteBtn = null;
+                syncPalette(currentIndex); // re-highlight current
+            }
+            updateAnsweredCount();
+
+            // Auto-advance to next question after a short delay
+            if (currentIndex < allCards.length - 1) {
+                setTimeout(function() { navigateQ(1); }, 400);
+            }
+        }
+    });
+
+    // Mark answered when code is typed (for coding blocks)
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.tagName.toLowerCase() === 'textarea') {
+            // It's a coding block
+            var btn = document.querySelectorAll('.q-num-btn')[currentIndex];
+            if (btn && e.target.value.trim().length > 0) {
+                btn.classList.add('answered');
+                updateAnsweredCount();
+            } else if (btn && e.target.value.trim().length === 0) {
+                btn.classList.remove('answered');
+                updateAnsweredCount();
+            }
+        }
+    });
+
+    function updateAnsweredCount() {
+        var answered = document.querySelectorAll('.q-num-btn.answered').length;
+        var el = document.getElementById('answered-count');
+        if (el) el.innerText = answered;
+    }
+</script>
+
+<script src="{% static 'sql_problems_data.js' %}"></script>
+<script src="{% static 'coding_problems_data.js' %}"></script>
+<script>
+    {% if not is_aptitude %}
+    var totalMcqs = {{ mcqs|length }};
+    {% if is_sql %}
+        document.addEventListener("DOMContentLoaded", () => {
+            const codingSection = document.getElementById('coding-section');
+            if (typeof sqlProblems !== 'undefined') {
+                const shuffled = sqlProblems.sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, {{ num_coding }});
+                
+                selected.forEach((prob, index) => {
+                    const overallNum = totalMcqs + index + 1;
+                    const card = document.createElement('div');
+                    card.className = 'q-card coding-block';
+                    card.innerHTML = `
+                        <div class="q-text" style="color:#0ea5e9;"><span style="color:#3b82f6; margin-right:8px;">Q${overallNum}.</span> ${prob.title} 
+                            <span style="font-size:0.8rem; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; vertical-align:middle; margin-left:10px;">${prob.difficulty}</span>
+                        </div>
+                        <p style="color:#64748b; margin-bottom:15px; font-size:0.9rem;">Write the most optimal query for the target schema below.</p>
+                        <div style="font-size: 0.95rem; color:#475569; margin-bottom:20px; line-height:1.6;">
+                            ${prob.description}
+                        </div>
+                        <textarea name="coding_answer_${prob.id}" placeholder="-- Write your SQL query here...\nSELECT * FROM ..."></textarea>
+                    `;
+                    if (codingSection) codingSection.appendChild(card);
+                    
+                    // Add to palette
+                    addPaletteButton(overallNum);
+                });
+            }
+            initPagination();
+        });
+    {% elif is_js %}
+        document.addEventListener("DOMContentLoaded", () => {
+            const codingSection = document.getElementById('coding-section');
+            // Hardcoded specific Frontend JS problems to fulfill user request
+            const jsProblems = [
+                { id: "js1", title: "DOM Element Creator", difficulty: "Medium", description: "Write a function `createButton(text, color)` that returns a new HTML button element with the specified text and background color." },
+                { id: "js2", title: "Event Listener Toggle", difficulty: "Easy", description: "Given an element ID, write a function that toggles a 'hidden' CSS class on it when clicked." },
+                { id: "js3", title: "Async API Fetch", difficulty: "Hard", description: "Write an async function `fetchUserData()` that fetches data from '/api/users' and returns the JSON payload. Handle network errors gracefully." },
+                { id: "js4", title: "Array Filter Map", difficulty: "Medium", description: "Given an array of objects `[{name: 'A', age: 20}, {name: 'B', age: 15}]`, return an array of names of people older than 18." },
+                { id: "js5", title: "Debounce Function", difficulty: "Expert", description: "Implement a `debounce(func, wait)` function that delays invoking `func` until after `wait` milliseconds have elapsed since the last time it was invoked." }
+            ];
+            
+            const shuffled = jsProblems.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, {{ num_coding }});
+            
+            selected.forEach((prob, index) => {
+                const overallNum = totalMcqs + index + 1;
+                const card = document.createElement('div');
+                card.className = 'q-card coding-block';
+                card.innerHTML = `
+                    <div class="q-text" style="color:#0ea5e9;"><span style="color:#3b82f6; margin-right:8px;">Q${overallNum}.</span> ${prob.title} 
+                        <span style="font-size:0.8rem; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; vertical-align:middle; margin-left:10px;">${prob.difficulty}</span>
+                    </div>
+                    <p style="color:#64748b; margin-bottom:15px; font-size:0.9rem;">Write your frontend JavaScript solution below.</p>
+                    <div style="font-size: 0.95rem; color:#475569; margin-bottom:20px; line-height:1.6;">
+                        ${prob.description}
+                    </div>
+                    <textarea name="coding_answer_${prob.id}" placeholder="// Write your JS code here..."></textarea>
+                `;
+                if (codingSection) codingSection.appendChild(card);
+                
+                // Add to palette
+                addPaletteButton(overallNum);
+            });
+            initPagination();
+        });
+    {% else %}
+        document.addEventListener("DOMContentLoaded", () => {
+            const codingSection = document.getElementById('coding-section');
+            if (typeof codingProblems !== 'undefined') {
+                const shuffled = codingProblems.sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, {{ num_coding }});
+                
+                selected.forEach((prob, index) => {
+                    const overallNum = totalMcqs + index + 1;
+                    const card = document.createElement('div');
+                    card.className = 'q-card coding-block';
+                    card.innerHTML = `
+                        <div class="q-text" style="color:#0ea5e9;"><span style="color:#3b82f6; margin-right:8px;">Q${overallNum}.</span> ${prob.title} 
+                            <span style="font-size:0.8rem; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:12px; vertical-align:middle; margin-left:10px;">${prob.difficulty}</span>
+                        </div>
+                        <p style="color:#64748b; margin-bottom:15px; font-size:0.9rem;">Write or paste your optimal solution in the code editor below.</p>
+                        <div style="font-size: 0.95rem; color:#475569; margin-bottom:20px; line-height:1.6;">
+                            ${prob.description}
+                        </div>
+                        <textarea name="coding_answer_${prob.id}" placeholder="// Write your solution here..."></textarea>
+                    `;
+                    if (codingSection) codingSection.appendChild(card);
+                    
+                    // Add to palette
+                    addPaletteButton(overallNum);
+                });
+            }
+            initPagination();
+        });
+    {% endif %}
+
+    function addPaletteButton(num) {
+        const grid = document.getElementById('q-num-grid');
+        if(!grid) return;
+        const btn = document.createElement('a');
+        btn.className = 'q-num-btn';
+        btn.innerText = num;
+        btn.href = '#';
+        grid.appendChild(btn);
+    }
+    {% else %}
+        document.addEventListener('DOMContentLoaded', initPagination);
+    {% endif %}
+</script>
+
+<script>
+    // 45 Minute Timer
+    let timeRemaining = 45 * 60; // 45 mins in seconds
+    const display = document.getElementById('time-display');
+    const form = document.getElementById('assessment-form');
+    
+    const interval = setInterval(() => {
+        timeRemaining--;
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+        
+        display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if(timeRemaining <= 60) {
+            display.style.animation = "beep 1s infinite alternate";
+        }
+        
+        if (timeRemaining <= 0) {
+            clearInterval(interval);
+            alert("Time's up! Your assessment is being submitted automatically.");
+            form.submit();
+        }
+    }, 1000);
+</script>
+
+
+
+<!-- ── TensorFlow AI Libraries ── -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+
+<!-- ── Proctoring CSS ── -->
+<style>
+    /* Camera widget */
+    #camera-wrapper {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 9999;
+    }
+    #proctoring-camera {
+        width: 180px;
+        height: 135px;
+        background: #1e293b;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border: 4px solid #f59e0b; /* Yellow while loading */
+        object-fit: cover;
+        display: block;
+    }
+    #cam-status-badge {
+        position: absolute;
+        top: -12px; left: -10px;
+        background: #f59e0b;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        white-space: nowrap;
+        transition: background 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    #cam-violation-count {
+        position: absolute;
+        bottom: -12px; right: -10px;
+        background: #ef4444;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: none;
+        box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+    }
+
+    /* Tab-switch alert banner (small, stays on page) */
+    #alert-banner {
+        display: none;
+        position: fixed;
+        top: 75px; left: 0; right: 0;
+        background: linear-gradient(135deg, #b91c1c, #dc2626);
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 16px 30px;
+        z-index: 20001;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        box-shadow: 0 6px 20px rgba(185,28,28,0.45);
+        animation: bannerSlide 0.35s ease;
+    }
+    @keyframes bannerSlide {
+        from { transform: translateY(-60px); opacity: 0; }
+        to   { transform: translateY(0);     opacity: 1; }
+    }
+    #alert-banner .ab-left { display: flex; align-items: center; gap: 12px; }
+    #alert-banner .ab-badge {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    #alert-banner .ab-btn {
+        background: white;
+        color: #dc2626;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 22px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: transform 0.15s;
+    }
+    #alert-banner .ab-btn:hover { transform: scale(1.04); }
+
+    /* AI Object Violation full overlay */
+    #warning-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(185, 28, 28, 0.97);
+        z-index: 20002;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+    }
+    #warning-overlay h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 15px; }
+    #warning-overlay p  { font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
+    #warning-overlay .vbadge {
+        background: rgba(255,255,255,0.15);
+        border: 2px solid rgba(255,255,255,0.35);
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 15px 0;
+        display: inline-block;
+    }
+    #warning-overlay .wb-btn {
+        margin-top: 22px;
+        padding: 14px 38px;
+        background: white;
+        color: #dc2626;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    #warning-overlay .wb-btn:hover { transform: scale(1.05); }
+
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+
+<!-- ── HTML elements ── -->
+<div id="camera-wrapper">
+    <span id="cam-status-badge">⚡ Starting...</span>
+    <video id="proctoring-camera" autoplay playsinline muted></video>
+    <span id="cam-violation-count"></span>
+</div>
+
+<div id="alert-banner">
+    <div class="ab-left">
+        <i class="fas fa-exclamation-triangle" style="font-size:1.3rem;"></i>
+        <span id="ab-msg">Tab Switch Detected</span>
+        <span class="ab-badge" id="ab-count">1 / 3</span>
+    </div>
+    <button class="ab-btn" onclick="dismissBanner()">Acknowledge & Continue</button>
+</div>
+
+<div id="warning-overlay"></div>
+
+<!-- ── Single unified Proctoring Script ── -->
+<script>
+(function() {
+    'use strict';
+
+    // -- State --
+    var violations    = 0;
+    var aiModel       = null;
+    var scanTimer     = null;
+    var coolingDown   = false;
+
+    var overlay = document.getElementById('warning-overlay');
+
+    // ── 1. Audio Beep (Web Audio API, no file needed) ──
+    function beep() {
+        try {
+            var ctx = new (window.AudioContext || window.webkitAudioContext)();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
+            osc.frequency.setValueAtTime(880, ctx.currentTime + 0.30);
+            gain.gain.setValueAtTime(0.35, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+            osc.start(); osc.stop(ctx.currentTime + 0.5);
+        } catch(e) {}
+    }
+
+    // ── 2. Camera status badge ──
+    function setStatus(text, color) {
+        var b = document.getElementById('cam-status-badge');
+        if (!b) return;
+        b.innerText = text;
+        b.style.background = color;
+    }
+
+    function setCamBorder(color) {
+        var v = document.getElementById('proctoring-camera');
+        if (v) v.style.border = '4px solid ' + color;
+    }
+
+    // ── 3. Tab-switch → small alert banner ──
+    function showBanner(msg, count) {
+        beep();
+        var banner = document.getElementById('alert-banner');
+        document.getElementById('ab-msg').innerText   = msg;
+        document.getElementById('ab-count').innerText = count + ' Total';
+        banner.style.display = 'flex';
+        updateViolationBadge();
+        setCamBorder('#ef4444');
+        setStatus('🔴 VIOLATION', '#dc2626');
+        // auto-dismiss after 8s
+        setTimeout(dismissBanner, 8000);
+    }
+
+    window.dismissBanner = function() {
+        document.getElementById('alert-banner').style.display = 'none';
+        setCamBorder('#10b981');
+        setStatus('🤖 AI ACTIVE', '#10b981');
+        coolingDown = false;
+        if (aiModel && !scanTimer) {
+            scanTimer = setInterval(scanFrame, 500);
+        }
+    };
+
+    // ── 4. Full overlay (AI object detection / Tab switch termination) ──
+    function showOverlay(reason) {
+        if (overlay.style.display === 'flex') return;
+        coolingDown = true;
+        clearInterval(scanTimer); scanTimer = null;
+        setCamBorder('#ef4444');
+        setStatus('🔴 VIOLATION', '#dc2626');
+        beep();
+        updateViolationBadge();
+
+        overlay.innerHTML = '<h1><i class="fas fa-ban"></i> Assessment Voided</h1><p>' + reason + '</p><div class="vbadge">Zero Tolerance Violation</div><p id="cd-text">Forcibly submitting assessment in 3 seconds...</p>';
+        overlay.style.display = 'flex';
+        var cd = 3;
+        var cdi = setInterval(function() {
+            cd--;
+            var el = document.getElementById('cd-text');
+            if (el) el.innerText = 'Forcibly submitting assessment in ' + cd + ' seconds...';
+            if (cd <= 0) { 
+                clearInterval(cdi); 
+                var form = document.getElementById('assessment-form');
+                if (form) form.submit();
+            }
+        }, 1000);
+    }
+
+    // ── 5. Violation badge on camera ──
+    function updateViolationBadge() {
+        var b = document.getElementById('cam-violation-count');
+        if (!b) return;
+        b.innerText = '⚠ ' + violations + ' Violation' + (violations > 1 ? 's' : '');
+        b.style.display = 'block';
+    }
+
+    // ── 6. Tab-switch handler ──
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) return;
+        if (coolingDown) return;
+        coolingDown = true;
+        violations++;
+        clearInterval(scanTimer); scanTimer = null;
+
+        showOverlay('🔀 Browser Tab Switched — Focus lost!');
+    });
+
+    // ── 7. Camera start ──
+    function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setStatus('❌ No Camera API', '#ef4444');
+            return;
+        }
+        navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:320, height:240 } })
+        .then(function(stream) {
+            var v = document.getElementById('proctoring-camera');
+            v.srcObject = stream;
+            setStatus('⚡ Loading AI...', '#f59e0b');
+            v.addEventListener('loadeddata', bootAI);
+        })
+        .catch(function(err) {
+            setStatus('❌ Camera Denied', '#ef4444');
+            setCamBorder('#ef4444');
+            console.warn('Camera error:', err);
+        });
+    }
+
+    // ── 8. Load TF model ──
+    function bootAI() {
+        if (typeof cocoSsd === 'undefined') {
+            setStatus('⚠ TF Not Loaded', '#ef4444');
+            return;
+        }
+        cocoSsd.load({ base: 'mobilenet_v2' }).then(function(model) {
+            aiModel = model;
+            setStatus('🤖 AI ACTIVE', '#10b981');
+            setCamBorder('#10b981');
+            scanTimer = setInterval(scanFrame, 500);
+        }).catch(function(e) {
+            setStatus('⚠ AI Failed', '#ef4444');
+            console.error('COCO-SSD load error:', e);
+        });
+    }
+
+    // ── 9. Per-frame scan ──
+    function scanFrame() {
+        if (coolingDown || !aiModel) return;
+        var v = document.getElementById('proctoring-camera');
+        if (!v || v.paused || v.ended || v.readyState < 2) return;
+
+        aiModel.detect(v).then(function(preds) {
+            var phones = 0, persons = 0;
+            preds.forEach(function(p) {
+                if (p.class === 'cell phone' && p.score > 0.40) phones++;
+                if (p.class === 'person'     && p.score > 0.45) persons++;
+            });
+            if (phones > 0) {
+                violations++;
+                coolingDown = true;
+                clearInterval(scanTimer); scanTimer = null;
+                showOverlay('📱 Mobile Phone Detected in Camera Feed');
+            } else if (persons > 1) {
+                violations++;
+                coolingDown = true;
+                clearInterval(scanTimer); scanTimer = null;
+                showOverlay('👥 Multiple Persons Detected in Frame');
+            }
+        }).catch(function(){});
+    }
+
+    // ── 10. Clipboard lock ──
+    document.addEventListener('copy', function(e) {
+        e.preventDefault(); beep();
+        alert('⚠️ Copying is disabled during the exam!');
+    });
+    document.addEventListener('paste', function(e) {
+        e.preventDefault(); beep();
+        alert('⚠️ Pasting external code is strictly prohibited!');
+    });
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+    // ── Boot on load ──
+    window.addEventListener('load', startCamera);
+
+})();
+</script>
+
+</body>
+</html>

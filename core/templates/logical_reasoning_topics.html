@@ -1,0 +1,478 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logical Reasoning | 6 Topics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="data:,">
+    
+    <style>
+        /* --- Global Styles --- */
+            * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+            body { background-color: #f4f7fb; color: #333; overflow-x: hidden; }
+
+            /* --- Navbar --- */
+            .navbar {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 20px 60px; background: #1e1e2f; position: sticky; top: 0; z-index: 1000;
+            }
+            .logo { color: #00d4ff; font-size: 22px; font-weight: 600; text-decoration: none; }
+            nav { display: flex; align-items: center; gap: 20px; }
+            nav a { text-decoration: none; color: #fff; font-weight: 400; transition: 0.3s; }
+            nav a:hover { color: #00d4ff; }
+            .btn-logout { color: #ff4d4d !important; font-weight: bold; }
+
+            /* --- Hero Section --- */
+            .hero {
+                text-align: center; padding: 80px 20px 140px;
+                background: linear-gradient(135deg, #1e1e2f, #00d4ff); color: #fff;
+            }
+            .hero h1 { font-size: 38px; margin-bottom: 15px; font-weight: 700; }
+            .hero p { font-size: 18px; opacity: 0.9; max-width: 700px; margin: auto; }
+
+            /* --- Container & Grid --- */
+            .container { max-width: 1200px; margin: -80px auto 100px; padding: 0 20px; }
+
+            .level-header {
+                margin: 40px 0 25px; padding: 15px 25px; background: #fff;
+                border-left: 6px solid #6c63ff; border-radius: 12px;
+                font-size: 22px; font-weight: 700; color: #1e1e2f;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                display: flex; align-items: center; gap: 12px;
+            }
+
+            .topics-grid {
+                display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;
+            }
+
+            /* --- Premium Card --- */
+            .topic-card {
+                background: #fff; border-radius: 20px; padding: 30px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.4s;
+                position: relative; border: 1px solid rgba(0,0,0,0.02);
+                display: flex; flex-direction: column;
+            }
+            .topic-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+            
+            .topic-card::before {
+                content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+                background: linear-gradient(90deg, #00d4ff, #6c63ff); border-radius: 20px 20px 0 0;
+            }
+
+            .card-icon { font-size: 35px; color: #00d4ff; margin-bottom: 20px; }
+            .topic-card h3 { font-size: 19px; color: #1e1e2f; margin-bottom: 12px; font-weight: 600; }
+            .topic-card p { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 15px; flex-grow: 1; }
+
+            /* --- Progress Bar --- */
+            .progress-container { margin-bottom: 20px; }
+            .progress-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px; }
+            .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 10px; overflow: hidden; }
+            .progress-fill { height: 100%; background: linear-gradient(90deg, #00d4ff, #6c63ff); border-radius: 10px; }
+
+            /* --- Buttons --- */
+            .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            .btn {
+                padding: 10px; text-align: center; border-radius: 10px;
+                text-decoration: none; font-size: 12px; font-weight: 700; transition: 0.3s;
+            }
+            .btn-learn { background: #f0f4ff; color: #6c63ff; grid-column: span 2; margin-bottom: 5px; }
+            .btn-practice { background: #e0faff; color: #00d4ff; }
+            .btn-test { background: #ffffff; color: #070606; border: 1px solid #eee; }
+            .btn:hover { filter: brightness(0.9); transform: scale(1.02); }
+
+            /* Level Specific Colors */
+            .level-2 .level-header { border-left-color: #00d4ff; }
+            .advanced-level .level-header { border-left-color: #ff4d4d; }
+            .advanced-level .topic-card::before { background: linear-gradient(90deg, #ff4d4d, #f97316); }
+            .advanced-level .card-icon { color: #ff4d4d; }
+            .advanced-level .progress-fill { background: linear-gradient(90deg, #ff4d4d, #f97316); }
+
+            footer { text-align: center; padding: 40px; color: #888; font-size: 14px; }
+
+            @media (max-width: 768px) {
+                .navbar { padding: 15px 20px; }
+                .hero h1 { font-size: 28px; }
+                .container { margin-top: -50px; }
+            }
+            /* --- Footer Styling --- */
+    footer {
+        text-align: center;
+        padding: 40px;
+        background: #f4f7fb; /* Matches body background */
+    }
+
+    footer p {
+        color: #6c63ff; 
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+        /* GLOBAL RESPONSIVE NAVBAR FIXES INJECTED */
+        body, h1, h2, h3, h4, p, a, span, div, button, input, label, th, td { font-family: "Poppins", sans-serif; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                padding: 15px 10px !important;
+                height: auto !important;
+            }
+            nav {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            nav a, nav li a, .btn-logout, .btn-signup {
+                font-size: 13px !important;
+                padding: 5px 8px !important;
+                white-space: nowrap !important;
+            }
+        }
+        @media (max-width: 480px) {
+            nav { gap: 4px !important; }
+            nav a, nav li a, .btn-logout, .btn-signup { font-size: 11px !important; }
+        }
+</style>
+</head>
+<body>
+
+    <nav class="navbar" style="padding: 5px 60px; height: auto;">
+        <a href="/home/" class="logo" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+            <img src="{% static 'brand_logo.png' %}" alt="Logo" style="height:65px; width:65px; object-fit:contain;">
+            <span style="font-size:1.9rem; font-weight:800; color:#00d2ff; letter-spacing:1px; font-family:Poppins,sans-serif; text-shadow:0 0 15px rgba(0,210,255,0.3);">AI LEARNING PATH</span>
+        </a>
+        <nav>
+            <a href="/home/">Dashboard</a>
+            <a href="{% url 'progress_view' %}">Progress</a>
+            <a href="/logout/" class="btn-logout">Logout</a>
+        </nav>
+    </nav>
+
+    <header class="hero">
+        <h1>Logical Reasoning Mastery</h1>
+        <p>Enhance your cognitive skills with fundamental reasoning concepts.</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="level-header"><i class="fas fa-brain"></i> Fundamentals of Logical Reasoning</div>
+        <div class="topics-grid">
+            <div class="topic-card">
+                <i class="fas fa-sort-numeric-up card-icon"></i>
+                <h3>Number Series</h3>
+                <p>Identify missing numbers and patterns.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=number_series" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=number_series&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=number_series&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-font card-icon"></i>
+                <h3>Alphabet Series</h3>
+                <p>Complete series formed using alphabets.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=alphabet_series" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=alphabet_series&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=alphabet_series&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-keyboard card-icon"></i>
+                <h3>Alphanumeric Series</h3>
+                <p>Mixed sequences of numbers, alphabets, and symbols.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=alphanumeric_series" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=alphanumeric_series&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=alphanumeric_series&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-barcode card-icon"></i>
+                <h3>Coding – Decoding</h3>
+                <p>Analyze fundamental algorithms and coded patterns.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=coding_decoding" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=coding_decoding&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=coding_decoding&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-users card-icon"></i>
+                <h3>Blood Relations</h3>
+                <p>Determine relations from a given set of information.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=blood_relations" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=blood_relations&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=blood_relations&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <i class="fas fa-compass card-icon"></i>
+                <h3>Direction Sense Test</h3>
+                <p>Map out paths and calculate distances using directions.</p>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="action-group">
+                    <a href="{% url 'topic_detail' %}?topic=direction_sense" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=direction_sense&mode=practice" class="btn btn-practice">Practice</a>
+                    <a href="{% url 'aptitude_test_view' %}?topic=direction_sense&mode=test" class="btn btn-test">Test</a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="level-2">
+            <div class="level-header"><i class="fas fa-layer-group"></i> Level 2: Intermediate Reasoning</div>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <i class="fas fa-circle-notch card-icon"></i>
+                    <h3>Syllogism</h3>
+                    <p>Deductive reasoning using stated premises.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=syllogism" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=syllogism&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=syllogism&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-shapes card-icon"></i>
+                    <h3>Venn Diagrams</h3>
+                    <p>Logical relations between different sets.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=venn_diagrams" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=venn_diagrams&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=venn_diagrams&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-sort-amount-up card-icon"></i>
+                    <h3>Order & Ranking</h3>
+                    <p>Position-based logic and sorting scenarios.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=order_ranking" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=order_ranking&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=order_ranking&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-chair card-icon"></i>
+                    <h3>Seating Arrangement (Linear)</h3>
+                    <p>Single and double row alignment puzzles.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=linear_seating" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=linear_seating&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=linear_seating&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-sync card-icon"></i>
+                    <h3>Circular Seating Arrangement</h3>
+                    <p>Inward and outward facing circle puzzles.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=circular_seating" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=circular_seating&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=circular_seating&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-gavel card-icon"></i>
+                    <h3>Statement & Conclusion</h3>
+                    <p>Deducing factual outcomes from statements.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=statement_conclusion" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=statement_conclusion&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=statement_conclusion&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="advanced-level">
+            <div class="level-header"><i class="fas fa-chess-knight"></i> Level 3: Advanced Reasoning</div>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <i class="fas fa-building card-icon"></i>
+                    <h3>Logical Puzzles (Floor/Box)</h3>
+                    <p>Multi-variable mapping and scheduling.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=logical_puzzles" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=logical_puzzles&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=logical_puzzles&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-balance-scale-left card-icon"></i>
+                    <h3>Data Sufficiency</h3>
+                    <p>Determining if given data answers the question.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=data_sufficiency" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=data_sufficiency&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=data_sufficiency&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-exchange-alt card-icon"></i>
+                    <h3>Input – Output</h3>
+                    <p>Machine sequence logic and shifts.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=input_output" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=input_output&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=input_output&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-brain card-icon"></i>
+                    <h3>Critical Reasoning</h3>
+                    <p>Analyzing arguments, strengths, and weaknesses.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=critical_reasoning" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=critical_reasoning&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=critical_reasoning&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-tasks card-icon"></i>
+                    <h3>Statement & Assumption/Course</h3>
+                    <p>Identifying hidden assumptions and next steps.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=statement_assumption" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=statement_assumption&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=statement_assumption&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <i class="fas fa-network-wired card-icon"></i>
+                    <h3>Analytical Reasoning (Multi-Var)</h3>
+                    <p>Complex relational frameworks and constraints.</p>
+                    <div class="progress-container">
+                        <div class="progress-label"><span>Progress</span><span>0%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="action-group">
+                        <a href="{% url 'topic_detail' %}?topic=analytical_reasoning" class="btn btn-learn"><i class="fas fa-graduation-cap"></i> Learn</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=analytical_reasoning&mode=practice" class="btn btn-practice">Practice</a>
+                        <a href="{% url 'aptitude_test_view' %}?topic=analytical_reasoning&mode=test" class="btn btn-test">Test</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Aptitude Mastery Platform. All rights reserved.</p>
+    </footer>
+
+{% include 'ai_bot.html' %}
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const topicKeys = [
+            'number_series', 'alphabet_series', 'alphanumeric_series', 'coding_decoding', 'blood_relations', 'direction_sense',
+            'syllogism', 'venn_diagrams', 'order_ranking', 'linear_seating', 'circular_seating', 'statement_conclusion',
+            'logical_puzzles', 'data_sufficiency', 'input_output', 'critical_reasoning', 'statement_assumption', 'analytical_reasoning'
+        ];
+        const progressFills = document.querySelectorAll('.progress-fill');
+        const progressLabels = document.querySelectorAll('.progress-label span:nth-child(2)');
+        
+        topicKeys.forEach((key, index) => {
+            const progress = localStorage.getItem('aptitude_progress_' + key) || 0;
+            if (progressFills[index]) {
+                progressFills[index].style.width = progress + '%';
+            }
+            if (progressLabels[index]) {
+                progressLabels[index].innerText = progress + '%';
+            }
+        });
+    });
+</script>
