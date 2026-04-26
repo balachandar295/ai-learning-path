@@ -35,6 +35,9 @@ client = Groq(api_key=GROQ_KEY)
 # ═══════════════════════════════════════
 def root_redirect(request):
     if request.user.is_authenticated:
+        pref, _ = UserPreference.objects.get_or_create(user=request.user)
+        if not pref.language:
+            return redirect('profile_view')
         return redirect('home_view')
     return redirect('login')
 
@@ -185,9 +188,12 @@ def submit_test(request):
 @login_required
 def home_view(request):
     pref, _ = UserPreference.objects.get_or_create(user=request.user)
+    if not pref.language:
+        return redirect('profile_view')
+        
     return render(request, 'basic.html', {
         'username': request.user.first_name or request.user.username,
-        'language': pref.language or "Not Selected",
+        'language': pref.language,
         'score': pref.last_score or 0
     })
 
@@ -195,6 +201,9 @@ def home_view(request):
 @login_required
 def dashboard_view(request):
     pref, _ = UserPreference.objects.get_or_create(user=request.user)
+    if not pref.language:
+        return redirect('profile_view')
+        
     today = date.today()
     score = pref.last_score or 0
 
@@ -239,7 +248,11 @@ def dashboard_view(request):
 # ═══════════════════════════════════════
 # 5. APTITUDE SECTION
 # ═══════════════════════════════════════
+@login_required
 def aptitude_categories(request):
+    pref, _ = UserPreference.objects.get_or_create(user=request.user)
+    if not pref.language:
+        return redirect('profile_view')
     return render(request, 'aptitude_categories.html')
 
 
@@ -714,6 +727,9 @@ def skill_test_instructions_view(request, category):
 
 @login_required(login_url='login')
 def skill_tests_hub_view(request):
+    pref, _ = UserPreference.objects.get_or_create(user=request.user)
+    if not pref.language:
+        return redirect('profile_view')
     return render(request, 'skill_tests_hub.html')
 
 
