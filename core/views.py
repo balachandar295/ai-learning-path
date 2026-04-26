@@ -825,3 +825,13 @@ def update_streak_api(request):
             return JsonResponse({"status": "success", "streak": pref.streak, "streak_updated": streak_updated})
         except Exception as e: return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"status": "Invalid request"}, status=400)
+
+from django.core.management import call_command
+from django.http import HttpResponse
+
+def load_data_view(request):
+    try:
+        call_command('loaddata', 'db_dump_clean.json')
+        return HttpResponse("Data loaded successfully! You can go back to the app now.")
+    except Exception as e:
+        return HttpResponse(f"Error loading data: {e}")
