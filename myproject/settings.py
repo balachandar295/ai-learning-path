@@ -127,8 +127,9 @@ SOCIALACCOUNT_PROMPT_ON_LOGOUT = False
 # 12. Security / CORS
 CORS_ALLOW_ALL_ORIGINS = True 
 CSRF_TRUSTED_ORIGINS = [
+    'https://ai-learning-path-3yon.onrender.com',
     'https://ai-learning-path-6.onrender.com',
-    'https://dreamy-correctly-jewell.ngrok-free.dev',
+    'https://ai-learning-path-a9ws.vercel.app',
     'http://127.0.0.1:8000',
     'http://localhost:8000'
 ]
